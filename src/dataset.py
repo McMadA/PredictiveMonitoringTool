@@ -1,22 +1,24 @@
-import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 
-# Read the CSV, skipping the first row but keeping the timestamp row
-df = pd.read_csv('../data/raw/time2.csv')
-df = df.drop(df.columns[:2], axis=1)
-df = df.drop(df.columns[-1], axis=1)
+# import pandas 
+import pandas as pd
+# load data
+df = pd.read_csv('../data/raw/report.csv', skiprows=2)
+# invert columns and rows
+df = df.T
+# remove first unnecessary row
+df = df.drop(columns=[0])
+# remove empty cells from first column
 
-df.head()
+counting_row = pd.DataFrame([range(1, len(df.columns) + 1)], columns=df.columns)
 
-
-save_csv = df.to_csv('../data/processed/time2.csv', index=False)
-
-
-
+# Add it to the top of the DataFrame
+df = pd.concat([counting_row, df], ignore_index=True)
+first_column = df.iloc[0, :]
 
 
 
