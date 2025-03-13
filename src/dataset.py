@@ -4,21 +4,46 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 
-# import pandas 
 import pandas as pd
-# load data
 df = pd.read_csv('../data/raw/report.csv', skiprows=2)
-# invert columns and rows
+
+#gemeten tijden onder elkaar zetten met transactie als 
+df.columns = df.iloc[0]  # Set first row as header
+df = df[1:].reset_index(drop=True)  # Remove the first row from data
 df = df.T
-# remove first unnecessary row
-df = df.drop(columns=[0])
-# remove empty cells from first column
+df.columns = df.iloc[0]  # Set first row as header
+df = df[1:].reset_index(drop=True)  # Remove the first row from data
 
-counting_row = pd.DataFrame([range(1, len(df.columns) + 1)], columns=df.columns)
 
-# Add it to the top of the DataFrame
-df = pd.concat([counting_row, df], ignore_index=True)
-first_column = df.iloc[0, :]
+#tijden onder elkaar zetten
+times = pd.read_csv('../data/raw/report.csv', skiprows=2)
+times.iloc[0] = times.columns
+times.iloc[0] = times.columns
+first_column = times.iloc[0, :] 
+first_column = first_column.loc[~first_column.str.contains('Unnamed')]
+# first_column = first_column.melt(var_name='time slot', value_name='time')
+first_column = first_column.dropna().reset_index(drop=True)
+
+
+#tijden toevoegen aan eerste dataframe
+df.insert(0, 'time', first_column)
+df.set_index('time', inplace=True)
+
+df = df.dropna(how="all")
+
+df.to_csv('../data/processed/report.csv')
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
