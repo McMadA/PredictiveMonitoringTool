@@ -1,8 +1,3 @@
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
 import pandas as pd
 import glob
 import os
@@ -36,8 +31,10 @@ for file in csv_files:
     df.set_index('time', inplace=True)
 
     df = df.dropna(how="all")
+  
+    #delete all excisting csv files in processed folder
 
-    #save to csv
+    
     output_file = os.path.join('../data/processed', os.path.basename(file))
     df.to_csv(output_file)
     
@@ -60,21 +57,3 @@ def combine_processed_csvs(input_directory, output_file):
     
 combine_processed_csvs('../data/processed', '../data/datasheet.csv')    
     
-    
-    
-    
-    
-    
-    
-    
-    
-dataset = pd.read_csv('../data/datasheet.csv')    
-
-X = 
-y = 
-
-
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Now X_train and X_test are ready for machine learning
