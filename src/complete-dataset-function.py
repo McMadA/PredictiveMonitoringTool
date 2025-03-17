@@ -55,5 +55,5 @@ def combine_processed_csvs(input_directory, output_file):
     
     print(f"Combined CSV saved to {output_file}")
     
-combine_processed_csvs('../data/processed', '../data/datasheet.csv')    
+combine_processed_csvs('../data/processed', '../data/datasheet2.csv')    
     
