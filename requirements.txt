@@ -1,3 +1,7 @@
 ipykernel
 python-dotenv
 pandas
+numpy
+scipy
+joblib
+matplotlib

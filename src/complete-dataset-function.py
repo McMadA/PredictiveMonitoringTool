@@ -31,9 +31,6 @@ for file in csv_files:
     df.set_index('time', inplace=True)
 
     df = df.dropna(how="all")
-  
-    #delete all excisting csv files in processed folder
-
     
     output_file = os.path.join('../data/processed', os.path.basename(file))
     df.to_csv(output_file)
