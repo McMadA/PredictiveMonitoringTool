@@ -6,6 +6,7 @@ from sklearn.metrics import classification_report, accuracy_score, precision_rec
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVC
 
 # Data inladen en voorbereiden
@@ -15,9 +16,27 @@ df.dropna(subset=['FSO_T00_SKPAuto_Opstarten'], inplace=True)
 # Selecteer alleen de kolommen die nodig zijn
 df = df.iloc[:, :2]
 
+# Datumconversie
+df['time'] = pd.to_datetime(df['time'], format='%d-%m %H:%M', errors='coerce')
+current_year = 2025
+df['time'] = df['time'].apply(lambda x: x.replace(year=current_year) if not pd.isna(x) else x)
+
 # Creëer een target kolom die aangeeft of de waarde boven de 8 seconden is
 df['target'] = (df['FSO_T00_SKPAuto_Opstarten'] > 8).astype(int)
 
+# Visualisatie van de laadtijd met target classificatie
+plt.figure(figsize=(12, 6))
+plt.plot(df['time'], df['FSO_T00_SKPAuto_Opstarten'], label='Laadtijd')
+plt.axhline(y=8, color='r', linestyle='--', label='Drempelwaarde (8 sec)')
+plt.scatter(df['time'], df['FSO_T00_SKPAuto_Opstarten'], c=df['target'], cmap='coolwarm', alpha=0.6)
+plt.title('Laadtijd met Target Classificatie')
+plt.xlabel('Datum en Tijd')
+plt.ylabel('Laadtijd (seconden)')
+plt.legend()
+plt.gcf().autofmt_xdate()
+plt.gca().xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%d-%m %H:%M'))
+
+plt.show()
 
 # Feature engineering: creëer een window van voorgaande waarden
 window_size = 10  # Dit kan worden aangepast op basis van domeinkennis
@@ -44,6 +63,8 @@ for i in range(window_size, len(df)):
 X = np.array(X)
 y = np.array(y)
 
+
+
 # Splits de data in training en test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -52,6 +73,18 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
+'''
+# Train een simpel model
+model = LinearRegression()
+model.fit(X_train_scaled, y_train)
+
+# Make predictions
+y_pred = model.predict(X_test_scaled)
+
+# Print 3 predictions with the corresponding actual values
+for i in range(3):
+    print(f"Predicted: {y_pred[i]} Actual: {y_test[i]}")
+'''
 
 # Train verschillende modellen
 models = {
