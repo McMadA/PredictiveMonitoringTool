@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
 
-df = pd.read_csv('../data/datasheet.csv', converters={'FSO_T00_SKPAuto_Opstarten': lambda x: float(x.replace(',', '.')) if x != '-' else None})
+df = pd.read_csv('..../data/datasheet.csv', converters={'FSO_T00_SKPAuto_Opstarten': lambda x: float(x.replace(',', '.')) if x != '-' else None})
 df.dropna(subset=['FSO_T00_SKPAuto_Opstarten'], inplace=True)
 # df.set_index('time', inplace=True)
 df = df.iloc[:, :2]
