@@ -14,7 +14,7 @@ log_stream = StringIO()
 logging.basicConfig(stream=log_stream, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Laad de data
-data = pd.read_csv('src\datasheet.csv')
+data = pd.read_csv('../data/datasheet.csv')
 
 # Converteer de relevante kolom naar numeriek en handel komma's af als decimaalpunten
 data['FSO_T00_SKPAuto_Opstarten'] = data['FSO_T00_SKPAuto_Opstarten'].str.replace(',', '.')
