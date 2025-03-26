@@ -1,0 +1,16 @@
+2025-03-26 11:01:27,131 - INFO - Starting the server...
+2025-03-26 11:01:27,219 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-26 11:01:27,219 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-26 11:01:27,219 - INFO -  * Restarting with stat
+2025-03-26 11:01:30,220 - INFO - Starting the server...
+2025-03-26 11:01:30,259 - WARNING -  * Debugger is active!
+2025-03-26 11:01:30,262 - INFO -  * Debugger PIN: 998-140-951
+2025-03-26 11:01:51,243 - INFO - 127.0.0.1 - - [26/Mar/2025 11:01:51] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-26 11:01:51,261 - INFO - 127.0.0.1 - - [26/Mar/2025 11:01:51] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-26 11:01:51,545 - INFO - 127.0.0.1 - - [26/Mar/2025 11:01:51] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-03-26 11:02:06,775 - INFO -  * Detected change in 'c:\\Users\\AO633371\\Documents\\MLmonitoring\\src\\simple predictabove8.py', reloading
+2025-03-26 11:02:07,088 - INFO -  * Restarting with stat
+2025-03-26 11:02:17,444 - INFO - Starting the server...
+2025-03-26 11:02:17,567 - WARNING -  * Debugger is active!
+2025-03-26 11:02:17,570 - INFO -  * Debugger PIN: 998-140-951
