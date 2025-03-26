@@ -6,7 +6,6 @@ from sklearn.metrics import classification_report, accuracy_score, precision_rec
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
-from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVC
 
 # Data inladen en voorbereiden
@@ -72,19 +71,6 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
-
-'''
-# Train een simpel model
-model = LinearRegression()
-model.fit(X_train_scaled, y_train)
-
-# Make predictions
-y_pred = model.predict(X_test_scaled)
-
-# Print 3 predictions with the corresponding actual values
-for i in range(3):
-    print(f"Predicted: {y_pred[i]} Actual: {y_test[i]}")
-'''
 
 # Train verschillende modellen
 models = {
