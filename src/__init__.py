@@ -9,19 +9,23 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 
 # Data inladen en voorbereiden
-df = pd.read_csv('../data/datasheet.csv', converters={'FSO_T00_SKPAuto_Opstarten': lambda x: float(x.replace(',', '.')) if x != '-' else None})
-df.dropna(subset=['FSO_T00_SKPAuto_Opstarten'], inplace=True)
-
-# Selecteer alleen de kolommen die nodig zijn
-df = df.iloc[:, :2]
+df = pd.read_csv('../data/datasheet.csv')
+converters={col: lambda x: float(x.replace(',', '.')) if x != '-' else None for col in df.columns if col != 'time'}
+df = pd.read_csv('../data/datasheet.csv', converters=converters)
+df.dropna(inplace=True)
 
 # Datumconversie
 df['time'] = pd.to_datetime(df['time'], format='%d-%m %H:%M', errors='coerce')
 current_year = pd.Timestamp.now().year
 df['time'] = df['time'].apply(lambda x: x.replace(year=current_year) if not pd.isna(x) else x)
 
-# Creëer een target kolom die aangeeft of de waarde boven de 8 seconden is
-df['target'] = (df['FSO_T00_SKPAuto_Opstarten'] > 8).astype(int)
+# Creëer target kolommen voor alle numerieke kolommen
+for col in df.columns:
+    if col != 'time':
+        df[f'{col}_target'] = (df[col] > 8).astype(int)
+
+# Toon de eerste paar rijen van het resultaat
+print(df.head())
 
 # Visualisatie van de laadtijd met target classificatie
 plt.figure(figsize=(12, 6))
@@ -34,34 +38,45 @@ plt.ylabel('Laadtijd (seconden)')
 plt.legend()
 plt.gcf().autofmt_xdate()
 plt.gca().xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%d-%m %H:%M'))
+
 plt.show()
 
 # Feature engineering: creëer een window van voorgaande waarden
-window_size = 10  # Dit kan worden aangepast op basis van domeinkennis
+window_size = 10
 
-# Creëer features op basis van voorgaande waarden
+# Lege lijsten voor features en labels
 X = []
 y = []
 
-for i in range(window_size, len(df)):
-    # Neem de laatste window_size waarden als features
-    features = df['FSO_T00_SKPAuto_Opstarten'].iloc[i-window_size:i].values
+# Loop door alle kolommen behalve 'time'
+for col in df.columns:
+    if col == 'time' or '_target' in col:
+        continue
+        
+    target_col = f'{col}_target'
     
-    # Voeg statistische features toe
-    mean_val = np.mean(features)
-    std_val = np.std(features)
-    trend = np.polyfit(range(window_size), features, 1)[0]  # Helling van de lineaire trend
-    
-    # Combineer alle features
-    all_features = np.concatenate([features, [mean_val, std_val, trend]])
-    
-    X.append(all_features)
-    y.append(df['target'].iloc[i])
+    # Loop door de dataset voor deze kolom
+    for i in range(window_size, len(df)):
+        # Tijdvenster van 10 waarden
+        window = df[col].iloc[i-window_size:i].values
+        
+        # Bereken statistische kenmerken
+        mean_val = np.mean(window)
+        std_val = np.std(window)
+        trend = np.polyfit(range(window_size), window, 1)[0]
+        
+        # Combineer tot één feature vector
+        combined_features = np.concatenate([window, [mean_val, std_val, trend]])
+        
+        X.append(combined_features)
+        y.append(df[target_col].iloc[i])
 
+# Converteer naar numpy arrays
 X = np.array(X)
 y = np.array(y)
 
-
+print(f"Vorm van X: {X.shape}")
+print(f"Vorm van y: {y.shape}")
 
 # Splits de data in training en test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
