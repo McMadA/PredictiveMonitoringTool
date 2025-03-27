@@ -17,7 +17,7 @@ df = df.iloc[:, :2]
 
 # Datumconversie
 df['time'] = pd.to_datetime(df['time'], format='%d-%m %H:%M', errors='coerce')
-current_year = 2025
+current_year = pd.Timestamp.now().year
 df['time'] = df['time'].apply(lambda x: x.replace(year=current_year) if not pd.isna(x) else x)
 
 # Creëer een target kolom die aangeeft of de waarde boven de 8 seconden is
@@ -34,7 +34,6 @@ plt.ylabel('Laadtijd (seconden)')
 plt.legend()
 plt.gcf().autofmt_xdate()
 plt.gca().xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%d-%m %H:%M'))
-
 plt.show()
 
 # Feature engineering: creëer een window van voorgaande waarden
