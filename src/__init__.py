@@ -27,19 +27,7 @@ for col in df.columns:
 # Toon de eerste paar rijen van het resultaat
 print(df.head())
 
-# Visualisatie van de laadtijd met target classificatie
-plt.figure(figsize=(12, 6))
-plt.plot(df['time'], df['FSO_T00_SKPAuto_Opstarten'], label='Laadtijd')
-plt.axhline(y=8, color='r', linestyle='--', label='Drempelwaarde (8 sec)')
-plt.scatter(df['time'], df['FSO_T00_SKPAuto_Opstarten'], c=df['target'], cmap='coolwarm', alpha=0.6)
-plt.title('Laadtijd met Target Classificatie')
-plt.xlabel('Datum en Tijd')
-plt.ylabel('Laadtijd (seconden)')
-plt.legend()
-plt.gcf().autofmt_xdate()
-plt.gca().xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%d-%m %H:%M'))
 
-plt.show()
 
 # Feature engineering: creëer een window van voorgaande waarden
 window_size = 10
@@ -75,8 +63,38 @@ for col in df.columns:
 X = np.array(X)
 y = np.array(y)
 
-print(f"Vorm van X: {X.shape}")
-print(f"Vorm van y: {y.shape}")
+#visualiseer de data
+plt.figure(figsize=(50, 8))
+plt.plot(df['FSO_T00_SKPAuto_Opstarten'].values, label='FSO_T00_SKPAuto_Opstarten')  # Laadtijd
+plt.plot(df['FSO_T01_SKPAuto_VerzekererdJaNee'].values, label='FSO_T01_SKPAuto_VerzekererdJaNee')
+plt.plot(df['FSO_T02_SKPAuto_Kenteken'].values, label='FSO_T02_SKPAuto_Kenteken')
+plt.plot(df['FSO_T03_SKPAuto_AutoCheck'].values, label='FSO_T03_SKPAuto_AutoCheck')   
+plt.plot(df['FSO_T04_SKPAuto_Postcode'].values, label='FSO_T04_SKPAuto_Postcode')
+plt.plot(df['FSO_T05_SKPAuto_Bestuurder'].values, label='FSO_T05_SKPAuto_Bestuurder')
+plt.plot(df['FSO_T06_SKPAuto_GeboorteDatum'].values, label='FSO_T06_SKPAuto_GeboorteDatum')
+plt.plot(df['FSO_T07_SKPAuto_SchadeVrijeJaren'].values, label='FSO_T07_SKPAuto_SchadeVrijeJaren')
+plt.plot(df['FSO_T08_SKPAuto_Kilometers'].values, label='FSO_T08_SKPAuto_Kilometers')
+plt.plot(df['FSO_T09_SKPAuto_Basisdekking'].values, label='FSO_T09_SKPAuto_Basisdekking')
+plt.plot(df['FSO_T10_SKPAuto_Uitbreiding'].values, label='FSO_T10_SKPAuto_Uitbreiding')
+plt.plot(df['FSO_T11_SKPAuto_Ingangsdatum'].values, label='FSO_T11_SKPAuto_Ingangsdatum')
+plt.plot(df['FSO_T12_SKPAuto_Ongevallen'].values, label='FSO_T12_SKPAuto_Ongevallen')
+plt.plot(df['FSO_T13_SKPAuto_Samenvatting1'].values, label='FSO_T13_SKPAuto_Samenvatting1')
+plt.plot(df['FSO_T14_SKPAuto_PriveZakelijk'].values, label='FSO_T14_SKPAuto_PriveZakelijk')
+plt.plot(df['FSO_T15_SKPAuto_KentekenOpNaam'].values, label='FSO_T15_SKPAuto_KentekenOpNaam')
+plt.plot(df['FSO_T16_SKPAuto_Persoonsgegevens'].values, label='FSO_T16_SKPAuto_Persoonsgegevens')
+plt.plot(df['FSO_T17_SKPAuto_Adres'].values, label='FSO_T17_SKPAuto_Adres')
+plt.plot(df['FSO_T18_SKPAuto_TelefoonEmail'].values, label='FSO_T18_SKPAuto_TelefoonEmail')
+plt.plot(df['FSO_T19_SKPAuto_AanvullendeVragen'].values, label='FSO_T19_SKPAuto_AanvullendeVragen')
+plt.plot(df['FSO_T20_SKPAuto_GeweigerdOpgezegd'].values, label='FSO_T20_SKPAuto_GeweigerdOpgezegd')
+plt.plot(df['FSO_T21_SKPAuto_StrafbaarFeit'].values, label='FSO_T21_SKPAuto_StrafbaarFeit')
+plt.plot(df['FSO_T22_SKPAuto_EerderSchade'].values, label='FSO_T22_SKPAuto_EerderSchade')
+plt.plot(df['FSO_T23_SKPAuto_MaandJaar'].values, label='FSO_T23_SKPAuto_MaandJaar')
+plt.plot(df['FSO_T24_SKPAuto_Rekeningnummer'].values, label='FSO_T24_SKPAuto_Rekeningnummer')
+plt.plot(df['FSO_T25_SKPAuto_Samenvatting2'].values, label='FSO_T25_SKPAuto_Samenvatting2')
+plt.plot(df['FSO_T26_SKPAuto_EindeScript'].values, label='FSO_T26_SKPAuto_EindeScript')
+plt.axhline(y=8, color='r', linestyle='--', label='Drempelwaarde (8 sec)')
+plt.legend()
+plt.show()
 
 # Splits de data in training en test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
