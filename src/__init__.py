@@ -8,58 +8,62 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 
-# Data inladen en voorbereiden
-df = pd.read_csv('../data/datasheet.csv')
-converters={col: lambda x: float(x.replace(',', '.')) if x != '-' else None for col in df.columns if col != 'time'}
-df = pd.read_csv('../data/datasheet.csv', converters=converters)
-df.dropna(inplace=True)
 
-# Datumconversie
+# Define converters to handle specific formatting in the CSV
+converters = {col: lambda x: float(x.replace(',', '.')) if x != '-' else None for col in pd.read_csv('../data/datasheet.csv').columns if col != 'time'}
+
+# Read the CSV file with converters applied
+df = pd.read_csv('../data/datasheet.csv', converters=converters)
+
+# Replace missing values with the previous valid value
+df.fillna(method='ffill', inplace=True)
+
+
+# Convert 'time' column to datetime format
 df['time'] = pd.to_datetime(df['time'], format='%d-%m %H:%M', errors='coerce')
 current_year = pd.Timestamp.now().year
 df['time'] = df['time'].apply(lambda x: x.replace(year=current_year) if not pd.isna(x) else x)
 
-# Creëer target kolommen voor alle numerieke kolommen
+# Create target variables based on the threshold of 8 seconds
 for col in df.columns:
     if col != 'time':
         df[f'{col}_target'] = (df[col] > 8).astype(int)
 
-# Toon de eerste paar rijen van het resultaat
+# Print the first few rows of the dataframe to check the data
 print(df.head())
 
 
 
-# Feature engineering: creëer een window van voorgaande waarden
+# Feature engineering: create features based on the last 10 values
 window_size = 10
 
-# Lege lijsten voor features en labels
+# Initialate empty lists for features and target variables
 X = []
 y = []
 
-# Loop door alle kolommen behalve 'time'
+# Loop through each column in the dataframe
 for col in df.columns:
     if col == 'time' or '_target' in col:
         continue
         
     target_col = f'{col}_target'
     
-    # Loop door de dataset voor deze kolom
+    # Loop trough the dataframe starting from the window size
     for i in range(window_size, len(df)):
-        # Tijdvenster van 10 waarden
         window = df[col].iloc[i-window_size:i].values
         
-        # Bereken statistische kenmerken
+        # Calculate additional features
         mean_val = np.mean(window)
         std_val = np.std(window)
         trend = np.polyfit(range(window_size), window, 1)[0]
         
-        # Combineer tot één feature vector
+        # Combine the features into a single array  
         combined_features = np.concatenate([window, [mean_val, std_val, trend]])
         
         X.append(combined_features)
         y.append(df[target_col].iloc[i])
 
-# Converteer naar numpy arrays
+# Convert lists to numpy arrays
 X = np.array(X)
 y = np.array(y)
 
