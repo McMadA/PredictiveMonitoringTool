@@ -67,7 +67,7 @@ for col in df.columns:
 X = np.array(X)
 y = np.array(y)
 
-#visualiseer de data
+#visualize the data
 plt.figure(figsize=(50, 8))
 plt.plot(df['FSO_T00_SKPAuto_Opstarten'].values, label='FSO_T00_SKPAuto_Opstarten')  # Laadtijd
 plt.plot(df['FSO_T01_SKPAuto_VerzekererdJaNee'].values, label='FSO_T01_SKPAuto_VerzekererdJaNee')
@@ -100,15 +100,15 @@ plt.axhline(y=8, color='r', linestyle='--', label='Drempelwaarde (8 sec)')
 plt.legend()
 plt.show()
 
-# Splits de data in training en test sets
+# Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Schaal de features
+# Scale the features
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# Train verschillende modellen
+# Train different models and evaluate their performance
 models = {
     'Logistic Regression': LogisticRegression(max_iter=1000, class_weight='balanced'),
     'Random Forest': RandomForestClassifier(class_weight='balanced', n_estimators=100),
@@ -118,13 +118,11 @@ models = {
 results = {}
 
 for name, model in models.items():
-    # Train het model
+    # Train the model
     model.fit(X_train_scaled, y_train)
-    
-    # Maak voorspellingen
+    # Make predictions
     y_pred = model.predict(X_test_scaled)
-    
-    # Evalueer het model
+    # Evaluate the model
     accuracy = accuracy_score(y_test, y_pred)
     precision, recall, f1, _ = precision_recall_fscore_support(y_test, y_pred, average='binary')
     
@@ -143,11 +141,11 @@ for name, model in models.items():
     print("\nClassification Report:")
     print(classification_report(y_test, y_pred))
 
-# Kies het beste model op basis van F1-score (balans tussen precision en recall)
+# Choose the best model based on F1 score
 best_model_name = max(results, key=lambda x: results[x]['f1'])
 print(f"\nBest model: {best_model_name} with F1 Score: {results[best_model_name]['f1']:.4f}")
 
-# Hyperparameter tuning voor het beste model
+# Hyperparameter tuning for the best model
 if best_model_name == 'Random Forest':
     param_grid = {
         'n_estimators': [50, 100, 200],
@@ -171,20 +169,20 @@ else:  # SVM
     }
     model = SVC(probability=True, class_weight='balanced')
 
-# Grid search voor optimale hyperparameters
+# Grid search for hyperparameter tuning
 grid_search = GridSearchCV(model, param_grid, cv=5, scoring='f1', n_jobs=-1)
 grid_search.fit(X_train_scaled, y_train)
 
 print(f"\nBest parameters: {grid_search.best_params_}")
 best_model = grid_search.best_estimator_
 
-# Evalueer het getunede model
+# Evaluate the tuned model
 y_pred = best_model.predict(X_test_scaled)
 print("\nTuned Model Performance:")
 print(classification_report(y_test, y_pred))
 
 
-# Functie om voorspellingen te maken voor nieuwe data
+# Function to predict if the next load time will breach the threshold of 8 seconds
 def predict_threshold_breach(model, scaler, new_data, window_size=10):
     """
     Voorspel of de laadtijd boven de 8 seconden zal komen op basis van recente metingen.
@@ -201,40 +199,40 @@ def predict_threshold_breach(model, scaler, new_data, window_size=10):
     if len(new_data) < window_size:
         raise ValueError(f"Niet genoeg data punten. Minimaal {window_size} nodig.")
     
-    # Gebruik de laatste window_size waarden
+    # Use the latest window_size data points
     recent_data = new_data[-window_size:]
     
-    # Bereken extra features
+    # Calculate additional features
     mean_val = np.mean(recent_data)
     std_val = np.std(recent_data)
     trend = np.polyfit(range(window_size), recent_data, 1)[0]
     
-    # Combineer features
+    # Combine features
     features = np.concatenate([recent_data, [mean_val, std_val, trend]])
     features = features.reshape(1, -1)
     
-    # Schaal de features
+    # Scale the features
     scaled_features = scaler.transform(features)
     
-    # Maak voorspelling
+    # Make prediction
     probability = model.predict_proba(scaled_features)[0, 1]
     prediction = model.predict(scaled_features)[0]
     
     return probability, prediction == 1
 
-# Voorbeeld van gebruik
+# Example usage of the prediction function
 recent_load_times = df['FSO_T00_SKPAuto_Opstarten'].iloc[-window_size:].values
 prob, will_breach = predict_threshold_breach(best_model, scaler, recent_load_times)
 print(f"\nKans dat de volgende laadtijd boven 8 seconden komt: {prob:.2f}")
 print(f"Voorspelling: {'Boven' if will_breach else 'Onder'} de drempel van 8 seconden")
 
-# Analyseer welke features het meest bijdragen aan de voorspelling
+# Analyse the feature importance for Random Forest
 if hasattr(best_model, 'feature_importances_'):
-    # Voor Random Forest
+    # For Random Forest
     importances = best_model.feature_importances_
     feature_names = [f"t-{window_size-i}" for i in range(window_size)] + ['mean', 'std', 'trend']
     
-    # Sorteer features op belangrijkheid
+    # Sort features by importance
     indices = np.argsort(importances)[::-1]
     
     plt.figure(figsize=(12, 8))
