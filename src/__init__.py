@@ -15,6 +15,9 @@ converters = {col: lambda x: float(x.replace(',', '.')) if x != '-' else None fo
 # Read the CSV file with converters applied
 df = pd.read_csv('../data/datasheet.csv', converters=converters)
 
+# Drop FSO_T19_SKPAuto_AanvullendeVragen omdat deze afwijkende treshold heeft
+df.drop(columns=['FSO_T19_SKPAuto_AanvullendeVragen'], inplace=True)
+
 # Replace missing values with the previous valid value
 df.fillna(method='ffill', inplace=True)
 
@@ -29,7 +32,7 @@ for col in df.columns:
         df[f'{col}_target'] = (df[col] > 8).astype(int)
 
 # Print the first few rows of the dataframe to check the data
-print(df.head())
+#print(df.head())
 
 # Feature engineering: create features based on the last 10 values
 window_size = 10
@@ -60,20 +63,10 @@ for col in df.columns:
         
         # Add hour of day as a feature
         hour_of_day = window_time.hour
-        day_of_week = window_time.weekday()  # Optional: add day of the week as a feature
-        weekday_mapping = {
-            0: 'Monday',
-            1: 'Tuesday',
-            2: 'Wednesday',
-            3: 'Thursday',
-            4: 'Friday',
-            5: 'Saturday',
-            6: 'Sunday'
-        }
-        day_of_week_str = weekday_mapping[day_of_week]
+        day_of_week = window_time.weekday()
         
         # Combine the features into a single array  
-        combined_features = np.concatenate([window, [mean_val, std_val, trend, hour_of_day, day_of_week_str]])
+        combined_features = np.concatenate([window, [mean_val, std_val, trend, hour_of_day, day_of_week]])
         
         X.append(combined_features)
         y.append(df[target_col].iloc[i])
@@ -86,20 +79,13 @@ window_times = np.array(window_times)
 
 # Visualize the data with datetime on x-axis
 plt.figure(figsize=(50, 8))
-
-# Plot each column against the time
 for col in df.columns:
     if col != 'time' and not col.endswith('_target'):
         plt.plot(df['time'], df[col], label=col)
-
-# Add threshold line
 plt.axhline(y=8, color='r', linestyle='--', label='Threshold (8 sec)')
-
-# Format the x-axis to show dates properly
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
-plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator())
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d %H:%M'))
+plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval=3))
 plt.gcf().autofmt_xdate()  # Rotate date labels for better readability
-
 plt.legend()
 plt.xlabel('Date and Time')
 plt.ylabel('Duration (seconds)')
@@ -108,7 +94,7 @@ plt.grid(True)
 plt.show()
 
 # Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 # Scale the features
 scaler = StandardScaler()
