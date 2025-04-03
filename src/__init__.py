@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
-
+import matplotlib.dates as mdates
 
 # Define converters to handle specific formatting in the CSV
 converters = {col: lambda x: float(x.replace(',', '.')) if x != '-' else None for col in pd.read_csv('../data/datasheet.csv').columns if col != 'time'}
@@ -17,7 +17,6 @@ df = pd.read_csv('../data/datasheet.csv', converters=converters)
 
 # Replace missing values with the previous valid value
 df.fillna(method='ffill', inplace=True)
-
 
 # Convert 'time' column to datetime format
 df['time'] = pd.to_datetime(df['time'], format='%d-%m %H:%M', errors='coerce')
@@ -32,14 +31,14 @@ for col in df.columns:
 # Print the first few rows of the dataframe to check the data
 print(df.head())
 
-
-
 # Feature engineering: create features based on the last 10 values
 window_size = 10
 
-# Initialate empty lists for features and target variables
+# Initialize empty lists for features and target variables
 X = []
 y = []
+window_times = []  # New list to store time information
+feature_names = []  # List to store feature names
 
 # Loop through each column in the dataframe
 for col in df.columns:
@@ -48,56 +47,53 @@ for col in df.columns:
         
     target_col = f'{col}_target'
     
-    # Loop trough the dataframe starting from the window size
+    # Loop through the dataframe starting from the window size
     for i in range(window_size, len(df)):
         window = df[col].iloc[i-window_size:i].values
+        window_time = df['time'].iloc[i]  # Get the timestamp for this window
         
         # Calculate additional features
         mean_val = np.mean(window)
         std_val = np.std(window)
         trend = np.polyfit(range(window_size), window, 1)[0]
         
+        # Add hour of day as a feature
+        hour_of_day = window_time.hour
+        
         # Combine the features into a single array  
-        combined_features = np.concatenate([window, [mean_val, std_val, trend]])
+        combined_features = np.concatenate([window, [mean_val, std_val, trend, hour_of_day]])
         
         X.append(combined_features)
         y.append(df[target_col].iloc[i])
+        window_times.append(window_time)  # Store the timestamp
+
 
 # Convert lists to numpy arrays
 X = np.array(X)
 y = np.array(y)
+window_times = np.array(window_times)
 
-#visualize the data
+# Visualize the data with datetime on x-axis
 plt.figure(figsize=(50, 8))
-plt.plot(df['FSO_T00_SKPAuto_Opstarten'].values, label='FSO_T00_SKPAuto_Opstarten')  # Laadtijd
-plt.plot(df['FSO_T01_SKPAuto_VerzekererdJaNee'].values, label='FSO_T01_SKPAuto_VerzekererdJaNee')
-plt.plot(df['FSO_T02_SKPAuto_Kenteken'].values, label='FSO_T02_SKPAuto_Kenteken')
-plt.plot(df['FSO_T03_SKPAuto_AutoCheck'].values, label='FSO_T03_SKPAuto_AutoCheck')   
-plt.plot(df['FSO_T04_SKPAuto_Postcode'].values, label='FSO_T04_SKPAuto_Postcode')
-plt.plot(df['FSO_T05_SKPAuto_Bestuurder'].values, label='FSO_T05_SKPAuto_Bestuurder')
-plt.plot(df['FSO_T06_SKPAuto_GeboorteDatum'].values, label='FSO_T06_SKPAuto_GeboorteDatum')
-plt.plot(df['FSO_T07_SKPAuto_SchadeVrijeJaren'].values, label='FSO_T07_SKPAuto_SchadeVrijeJaren')
-plt.plot(df['FSO_T08_SKPAuto_Kilometers'].values, label='FSO_T08_SKPAuto_Kilometers')
-plt.plot(df['FSO_T09_SKPAuto_Basisdekking'].values, label='FSO_T09_SKPAuto_Basisdekking')
-plt.plot(df['FSO_T10_SKPAuto_Uitbreiding'].values, label='FSO_T10_SKPAuto_Uitbreiding')
-plt.plot(df['FSO_T11_SKPAuto_Ingangsdatum'].values, label='FSO_T11_SKPAuto_Ingangsdatum')
-plt.plot(df['FSO_T12_SKPAuto_Ongevallen'].values, label='FSO_T12_SKPAuto_Ongevallen')
-plt.plot(df['FSO_T13_SKPAuto_Samenvatting1'].values, label='FSO_T13_SKPAuto_Samenvatting1')
-plt.plot(df['FSO_T14_SKPAuto_PriveZakelijk'].values, label='FSO_T14_SKPAuto_PriveZakelijk')
-plt.plot(df['FSO_T15_SKPAuto_KentekenOpNaam'].values, label='FSO_T15_SKPAuto_KentekenOpNaam')
-plt.plot(df['FSO_T16_SKPAuto_Persoonsgegevens'].values, label='FSO_T16_SKPAuto_Persoonsgegevens')
-plt.plot(df['FSO_T17_SKPAuto_Adres'].values, label='FSO_T17_SKPAuto_Adres')
-plt.plot(df['FSO_T18_SKPAuto_TelefoonEmail'].values, label='FSO_T18_SKPAuto_TelefoonEmail')
-plt.plot(df['FSO_T19_SKPAuto_AanvullendeVragen'].values, label='FSO_T19_SKPAuto_AanvullendeVragen')
-plt.plot(df['FSO_T20_SKPAuto_GeweigerdOpgezegd'].values, label='FSO_T20_SKPAuto_GeweigerdOpgezegd')
-plt.plot(df['FSO_T21_SKPAuto_StrafbaarFeit'].values, label='FSO_T21_SKPAuto_StrafbaarFeit')
-plt.plot(df['FSO_T22_SKPAuto_EerderSchade'].values, label='FSO_T22_SKPAuto_EerderSchade')
-plt.plot(df['FSO_T23_SKPAuto_MaandJaar'].values, label='FSO_T23_SKPAuto_MaandJaar')
-plt.plot(df['FSO_T24_SKPAuto_Rekeningnummer'].values, label='FSO_T24_SKPAuto_Rekeningnummer')
-plt.plot(df['FSO_T25_SKPAuto_Samenvatting2'].values, label='FSO_T25_SKPAuto_Samenvatting2')
-plt.plot(df['FSO_T26_SKPAuto_EindeScript'].values, label='FSO_T26_SKPAuto_EindeScript')
-plt.axhline(y=8, color='r', linestyle='--', label='Drempelwaarde (8 sec)')
+
+# Plot each column against the time
+for col in df.columns:
+    if col != 'time' and not col.endswith('_target'):
+        plt.plot(df['time'], df[col], label=col)
+
+# Add threshold line
+plt.axhline(y=8, color='r', linestyle='--', label='Threshold (8 sec)')
+
+# Format the x-axis to show dates properly
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator())
+plt.gcf().autofmt_xdate()  # Rotate date labels for better readability
+
 plt.legend()
+plt.xlabel('Date and Time')
+plt.ylabel('Duration (seconds)')
+plt.title('Time Series of All Columns')
+plt.grid(True)
 plt.show()
 
 # Split the data into training and testing sets
