@@ -40,6 +40,7 @@ y = []
 window_times = []  # New list to store time information
 feature_names = []  # List to store feature names
 
+
 # Loop through each column in the dataframe
 for col in df.columns:
     if col == 'time' or '_target' in col:
@@ -59,14 +60,24 @@ for col in df.columns:
         
         # Add hour of day as a feature
         hour_of_day = window_time.hour
+        day_of_week = window_time.weekday()  # Optional: add day of the week as a feature
+        weekday_mapping = {
+            0: 'Monday',
+            1: 'Tuesday',
+            2: 'Wednesday',
+            3: 'Thursday',
+            4: 'Friday',
+            5: 'Saturday',
+            6: 'Sunday'
+        }
+        day_of_week_str = weekday_mapping[day_of_week]
         
         # Combine the features into a single array  
-        combined_features = np.concatenate([window, [mean_val, std_val, trend, hour_of_day]])
+        combined_features = np.concatenate([window, [mean_val, std_val, trend, hour_of_day, day_of_week_str]])
         
         X.append(combined_features)
         y.append(df[target_col].iloc[i])
         window_times.append(window_time)  # Store the timestamp
-
 
 # Convert lists to numpy arrays
 X = np.array(X)
