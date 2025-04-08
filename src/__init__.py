@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 import matplotlib.dates as mdates
+from xgboost import XGBClassifier
 
 # Define converters to handle specific formatting in the CSV
 converters = {col: lambda x: float(x.replace(',', '.')) if x != '-' else None for col in pd.read_csv('../data/datasheet.csv').columns if col != 'time'}
@@ -105,7 +106,8 @@ X_test_scaled = scaler.transform(X_test)
 models = {
     'Logistic Regression': LogisticRegression(max_iter=1000, class_weight='balanced'),
     'Random Forest': RandomForestClassifier(class_weight='balanced', n_estimators=100),
-    'SVM': SVC(probability=True, class_weight='balanced')
+    'SVM': SVC(probability=True, class_weight='balanced'),
+    'XGBoost': XGBClassifier(use_label_encoder=False, eval_metric='logloss', scale_pos_weight=1)
 }
 
 results = {}
@@ -147,6 +149,15 @@ if best_model_name == 'Random Forest':
         'min_samples_leaf': [1, 2, 4]
     }
     model = RandomForestClassifier(class_weight='balanced')
+elif best_model_name == 'XGBoost':
+    param_grid = {
+        'n_estimators': [100, 200, 300],
+        'max_depth': [3, 4, 5],
+        'learning_rate': [0.01, 0.2, 0.3],
+        'subsample': [0.8, 0.9, 1.0],
+        'colsample_bytree': [0.8, 0.9, 1.0]
+    }
+    model = XGBClassifier(use_label_encoder=False, eval_metric='logloss')
 elif best_model_name == 'Logistic Regression':
     param_grid = {
         'C': [0.01, 0.1, 1, 10, 100],
