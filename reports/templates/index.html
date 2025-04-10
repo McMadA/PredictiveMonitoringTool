@@ -1,66 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>CSV Prediction Tool</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Prediction Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        h1 {
-            color: #333;
-        }
-        .container {
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .btn {
-            background-color: #4CAF50;
+        .header {
+            background-color: #343a40;
             color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
         }
-        .btn:hover {
-            background-color: #45a049;
+        .upload-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem 0;
+            margin-top: auto;
+        }
+        .upload-icon {
+            font-size: 4rem;
+            color: #343a40;
+            margin-bottom: 1rem;
+        }
+        .custom-file-upload {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .custom-file-upload:hover {
+            border-color: #343a40;
+            background-color: #f8f9fa;
+        }
+        .btn-predict {
+            background-color: #343a40;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-predict:hover {
+            background-color: #212529;
+        }
+        #file-name {
+            margin-top: 1rem;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Load Time Prediction Tool</h1>
-        <p>Upload your CSV file to predict whether load times will exceed 8 seconds.</p>
-        
-        <form action="/predict" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="file">Select CSV File:</label>
-                <input type="file" id="file" name="file" accept=".csv" required>
-            </div>
-            <button type="submit" class="btn">Generate Predictions</button>
-        </form>
-        
-        <div class="info">
-            <h3>CSV Format Requirements:</h3>
-            <ul>
-                <li>The CSV should contain a 'time' column in the format 'DD-MM HH:MM'</li>
-                <li>Each column represents a different metric to predict</li>
-                <li>Missing values should be represented as '-'</li>
-                <li>Decimal values should use comma as separator (e.g., '7,5')</li>
-            </ul>
+    <div class="header text-center">
+        <div class="container">
+            <h1><i class="bi bi-graph-up"></i> Performance Prediction Tool</h1>
+            <p class="lead">Upload your data file to predict transaction response times</p>
         </div>
     </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="upload-container">
+                    <form action="/predict" method="post" enctype="multipart/form-data">
+                        <div class="text-center mb-4">
+                            <i class="bi bi-cloud-arrow-up upload-icon"></i>
+                            <h3>Upload Performance Data</h3>
+                            <p>Select a CSV file with transaction response time data</p>
+                        </div>
+                        
+                        <label for="file-upload" class="custom-file-upload w-100">
+                            <i class="bi bi-file-earmark-text"></i> Choose a file or drag it here
+                        </label>
+                        <input id="file-upload" type="file" name="file" style="display: none;" accept=".csv">
+                        <div id="file-name" class="text-center"></div>
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-predict" id="predict-btn" disabled>
+                                <i class="bi bi-lightning-charge"></i> Generate Predictions
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-info-circle"></i> How it works</h5>
+                        <p>This tool analyzes your transaction response time data and predicts which transactions are at risk of exceeding the 8-second threshold in the next measurement.</p>
+                        <ol>
+                            <li>Upload your CSV file with transaction response time data</li>
+                            <li>The system will analyze the data using machine learning</li>
+                            <li>View a detailed report of predictions for each transaction</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer text-center">
+        <div class="container">
+            <p>Performance Monitoring System &copy; 2025</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('file-upload').addEventListener('change', function() {
+            const fileName = this.files[0] ? this.files[0].name : '';
+            document.getElementById('file-name').textContent = fileName;
+            document.getElementById('predict-btn').disabled = !fileName;
+        });
+
+        // Enable drag and drop
+        const dropZone = document.querySelector('.custom-file-upload');
+        
+        ['dragover', 'dragenter'].forEach(eventName => {
+            dropZone.addEventListener(eventName, e => {
+                e.preventDefault();
+                dropZone.classList.add('bg-light');
+            });
+        });
+        
+        ['dragleave', 'dragend'].forEach(eventName => {
+            dropZone.addEventListener(eventName, e => {
+                dropZone.classList.remove('bg-light');
+            });
+        });
+        
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('bg-light');
+            
+            const fileInput = document.getElementById('file-upload');
+            fileInput.files = e.dataTransfer.files;
+            
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+        });
+    </script>
 </body>
 </html>

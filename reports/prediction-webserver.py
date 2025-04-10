@@ -80,7 +80,7 @@ def predict():
         df.set_index('time', inplace=True)
 
         # Create a dictionary to store results
-        results_dict = {}
+        results = []
 
         # Make predictions for each column
         for col in df.columns:
@@ -110,30 +110,30 @@ def predict():
                     # Make prediction
                     probability = best_model.predict_proba(scaled_features)[0, 1]
                     prediction = best_model.predict(scaled_features)[0]
+# Determine risk level
+                    if probability < 0.3:
+                        risk_level = "low"
+                    elif probability < 0.7:
+                        risk_level = "medium"
+                    else:
+                        risk_level = "high"
 
-                    # Store in dictionary
-                    results_dict[col] = {
+                    # Store in results list
+                    results.append({
+                        'transaction': col,
                         'probability': probability,
-                        'prediction': prediction
-                    }
-
-        # Generate user-friendly text messages
-        text_output = []
-        for col, values in results_dict.items():
-            probability = values['probability']
-            message = f"Kans dat de volgende laadtijd van {col} boven 8 seconden komt: {probability:.2f}"
-            text_output.append(message)
-
-        # Save the text output to a file
-        output_text = "\n".join(text_output)
-        output_filename = f"predictions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-
-        # Create a response with the text file
-        response = make_response(output_text)
-        response.headers["Content-Disposition"] = f"attachment; filename={output_filename}"
-        response.headers["Content-type"] = "text/plain"
-
-        return response
+                        'prediction': int(prediction),
+                        'risk_level': risk_level
+                    })
+        
+        # Sort results by probability (highest first)
+        results.sort(key=lambda x: x['probability'], reverse=True)
+        
+        # Get timestamp for the report
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        # Render the results template
+        return render_template('results.html', results=results, timestamp=timestamp)
 
 
 if __name__ == '__main__':
