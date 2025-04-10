@@ -187,7 +187,7 @@ print(classification_report(y_test, y_pred))
 
 
 # Function to predict if the next load time will breach the threshold of 8 seconds
-def predict_threshold_breach(model, scaler, new_data, window_size=10):
+def predict_threshold_breach(model, scaler, new_data, datetime, window_size=10):
     """
     Voorspel of de laadtijd boven de 8 seconden zal komen op basis van recente metingen.
     
@@ -205,14 +205,17 @@ def predict_threshold_breach(model, scaler, new_data, window_size=10):
     
     # Use the latest window_size data points
     recent_data = new_data[-window_size:]
-    
+
     # Calculate additional features
     mean_val = np.mean(recent_data)
     std_val = np.std(recent_data)
     trend = np.polyfit(range(window_size), recent_data, 1)[0]
     
-    # Combine features
-    features = np.concatenate([recent_data, [mean_val, std_val, trend]])
+    # Bereken alle gebruikte features
+    hour_of_day = datetime.now().hour
+    day_of_week = datetime.now().weekday()
+
+    features = np.concatenate([recent_data, [mean_val, std_val, trend, hour_of_day, day_of_week]])
     features = features.reshape(1, -1)
     
     # Scale the features
@@ -224,12 +227,37 @@ def predict_threshold_breach(model, scaler, new_data, window_size=10):
     
     return probability, prediction == 1
 
-# Example usage of the prediction function
-recent_load_times = df['FSO_T00_SKPAuto_Opstarten'].iloc[-window_size:].values
-prob, will_breach = predict_threshold_breach(best_model, scaler, recent_load_times)
-print(f"\nKans dat de volgende laadtijd boven 8 seconden komt: {prob:.2f}")
-print(f"Voorspelling: {'Boven' if will_breach else 'Onder'} de drempel van 8 seconden")
+#Functie die de nieuwe csv importeert, goed convert en per kolom de voorspelling doet
+new_data = pd.read_csv('../data/datasheet_new.csv', converters=converters)
+new_data.drop(columns=['FSO_T19_SKPAuto_AanvullendeVragen'], inplace=True)
+new_data.fillna(method='ffill', inplace=True)
+new_data['time'] = pd.to_datetime(new_data['time'], format='%d-%m %H:%M', errors='coerce')
+new_data['time'] = new_data['time'].apply(lambda x: x.replace(year=current_year) if not pd.isna(x) else x)
+for col in df.columns:
+    if col != 'time':
+        new_data[f'{col}_target'] = (df[col] > 8).astype(int)
+X_new = []
+y_new = []
+window_times_new = []  
+feature_names_new = []  
+for col in new_data.columns:
+    if col == 'time' or '_target' in col:
+        continue
+        
+    target_col_new = f'{col}_target'
+    
+# Convert lists to numpy arrays
+X_new = np.array(X)
+y_new = np.array(y)
+window_times_new = np.array(window_times_new)
 
+for col in new_data.columns:
+    if col != 'time' and not col.endswith('_target'):
+        recent_load_times = new_data[col].iloc[-window_size:].values
+        datetime = new_data['time'].iloc[-1]  # Get the last timestamp
+        prob, will_breach = predict_threshold_breach(best_model, scaler, recent_load_times, datetime)
+        print(f"\nKans dat de volgende laadtijd van {col} boven 8 seconden komt: {prob:.2f}")
+  
 # Analyse the feature importance for Random Forest
 if hasattr(best_model, 'feature_importances_'):
     # For Random Forest
