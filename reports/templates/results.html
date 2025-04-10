@@ -131,6 +131,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ result.transaction }}</h5>
                         <p class="card-text">
+                            <strong>Laatst gemeten:</strong> {{ "%.2f"|format(result.latest_value) }} seconden<br>
                             {% if result.prediction == 1 %}
                                 <span class="badge bg-danger">Predicted to exceed threshold</span>
                             {% else %}

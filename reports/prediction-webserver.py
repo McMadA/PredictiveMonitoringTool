@@ -110,7 +110,8 @@ def predict():
                     # Make prediction
                     probability = best_model.predict_proba(scaled_features)[0, 1]
                     prediction = best_model.predict(scaled_features)[0]
-# Determine risk level
+                    
+                    # Determine risk level
                     if probability < 0.3:
                         risk_level = "low"
                     elif probability < 0.7:
@@ -118,9 +119,15 @@ def predict():
                     else:
                         risk_level = "high"
 
+                    #Latest value of each column
+                    latest_value = df[col].iloc[-1]
+                    # Add the latest value to the results
+
+
                     # Store in results list
                     results.append({
                         'transaction': col,
+                        'latest_value': latest_value,
                         'probability': probability,
                         'prediction': int(prediction),
                         'risk_level': risk_level
