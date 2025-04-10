@@ -17,31 +17,31 @@
         .header {
             background-color: #343a40;
             color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
+            padding: 1rem 0;
+            margin-bottom: 1rem;
         }
         .upload-container {
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
         }
         .footer {
             background-color: #343a40;
             color: white;
-            padding: 1rem 0;
+            padding: 0.5rem 0;
             margin-top: auto;
         }
         .upload-icon {
-            font-size: 4rem;
+            font-size: 3rem;
             color: #343a40;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
         .custom-file-upload {
             border: 2px dashed #dee2e6;
             border-radius: 10px;
-            padding: 2rem;
+            padding: 1.5rem;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -54,7 +54,7 @@
             background-color: #343a40;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 5px;
             transition: background-color 0.3s ease;
         }
@@ -62,28 +62,119 @@
             background-color: #212529;
         }
         #file-name {
-            margin-top: 1rem;
+            margin-top: 0.5rem;
             font-weight: bold;
+        }
+        .instructions-card {
+            margin-bottom: 1rem;
+        }
+        .step {
+            margin-bottom: 0.25rem;
+            padding-left: 1.25rem;
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        .substep {
+            margin-left: 1.25rem;
+            margin-bottom: 0.15rem;
+        }
+        .accordion-button:not(.collapsed) {
+            background-color: #e9ecef;
+            color: #212529;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .card-title {
+            font-size: 1.1rem;
+        }
+        p, .step p {
+            margin-bottom: 0.5rem;
+        }
+        h6 {
+            font-size: 1rem;
         }
     </style>
 </head>
 <body>
     <div class="header text-center">
         <div class="container">
-            <h1><i class="bi bi-graph-up"></i> Performance Prediction Tool</h1>
-            <p class="lead">Upload your data file to predict transaction response times</p>
+            <h1 class="h3"><i class="bi bi-graph-up"></i> Performance Prediction Tool</h1>
+            <p class="lead mb-0">Upload your data file to predict transaction response times</p>
         </div>
     </div>
 
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-lg-8">
+                <div class="card instructions-card">
+                    <div class="card-header p-2">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link w-100 text-start text-decoration-none p-0" type="button" data-bs-toggle="collapse" data-bs-target="#csvInstructions" aria-expanded="false" aria-controls="csvInstructions">
+                                <i class="bi bi-question-circle"></i> Handleiding: CSV-bestand maken voor Machine Learning POC
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="csvInstructions" class="collapse">
+                        <div class="card-body">
+                            <p>Voordat u een CSV-bestand kunt uploaden naar het voorspellingsportaal, moet u eerst de juiste gegevens exporteren uit APM. Hieronder vindt u een stapsgewijze handleiding voor het genereren van het benodigde CSV-bestand:</p>
+                            
+                            <h6 class="mt-3 mb-2">Stappen voor het maken van een CSV-bestand uit APM</h6>
+                            
+                            <div class="step"><span class="step-number">1.</span> <strong>Log in op APM - P</strong>
+                                <p class="mb-1">Open de APM Performance-omgeving en meld u aan met uw gebruikersgegevens.</p>
+                            </div>
+                            
+                            <div class="step"><span class="step-number">2.</span> <strong>Navigeer naar User Reports</strong>
+                                <p class="mb-1">Ga naar het menu "Applications" en selecteer "User Reports".</p>
+                            </div>
+                            
+                            <div class="step"><span class="step-number">3.</span> <strong>Zoek het rapport "Machine Learning POC"</strong>
+                                <p class="mb-1">Gebruik de zoekfunctie om te zoeken op naam: "Machine Learning POC"</p>
+                                <p class="mb-1 fst-italic">Dit rapport is als volgt gemaakt:</p>
+                                <div class="substep">a. Klik op "Nieuw" en selecteer "Aangepast Report"</div>
+                                <div class="substep">b. Vul bij Report Properties de titel, naam en beschrijving in als 'Machine Learning POC'</div>
+                                <div class="substep">c. Voeg een nieuw Report Component toe via "Add new component" → "End User Management" → "Analysis Report"</div>
+                                <div class="substep">d. Selecteer "Metrics over Time" als rapporttype, met weergave "Table" en formaat "Narrow"</div>
+                                <div class="substep">e. Bewerk de filter:
+                                    <div class="ms-3">i. Bij Applications selecteer "ACHMEA.FBTO.nl"</div>
+                                    <div class="ms-3">ii. Bij Active Filters ga naar Transactions en selecteer "FBTO_PREMIE_BEREKENEN_AUTO"</div>
+                                </div>
+                            </div>
+                            
+                            <div class="step"><span class="step-number">4.</span> <strong>Open het rapport</strong>
+                                <p class="mb-1">Dubbelklik op de naam van het rapport om het te openen.</p>
+                            </div>
+                            
+                            <div class="step"><span class="step-number">5.</span> <strong>Pas de weergave-instellingen aan</strong>
+                                <p class="mb-1">Wijzig de View naar "Custom", stel een tijdspanne in van 2,5 uur, en stel het interval in op "Every 5 minutes".</p>
+                            </div>
+                            
+                            <div class="step"><span class="step-number">6.</span> <strong>Genereer het rapport</strong>
+                                <p class="mb-1">Klik op de knop "Generate" om het rapport te maken.</p>
+                            </div>
+                            
+                            <div class="step"><span class="step-number">7.</span> <strong>Selecteer de benodigde kolommen</strong>
+                                <p class="mb-1">Selecteer de kolommen "Transaction" en "Transaction Response Time (sec.)"</p>
+                            </div>
+                            
+                            <div class="step"><span class="step-number">8.</span> <strong>Exporteer naar CSV-formaat</strong>
+                                <p class="mb-1">Klik op "Open in CSV Format". Het bestand wordt automatisch gedownload naar uw Downloads-map (./Downloads)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="upload-container">
                     <form action="/predict" method="post" enctype="multipart/form-data">
-                        <div class="text-center mb-4">
+                        <div class="text-center mb-3">
                             <i class="bi bi-cloud-arrow-up upload-icon"></i>
-                            <h3>Upload Performance Data</h3>
-                            <p>Select a CSV file with transaction response time data</p>
+                            <h3 class="h4">Upload Performance Data</h3>
+                            <p class="mb-2">Select a CSV file with transaction response time data</p>
                         </div>
                         
                         <label for="file-upload" class="custom-file-upload w-100">
@@ -92,7 +183,7 @@
                         <input id="file-upload" type="file" name="file" style="display: none;" accept=".csv">
                         <div id="file-name" class="text-center"></div>
                         
-                        <div class="text-center mt-4">
+                        <div class="text-center mt-3">
                             <button type="submit" class="btn btn-predict" id="predict-btn" disabled>
                                 <i class="bi bi-lightning-charge"></i> Generate Predictions
                             </button>
@@ -103,8 +194,8 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title"><i class="bi bi-info-circle"></i> How it works</h5>
-                        <p>This tool analyzes your transaction response time data and predicts which transactions are at risk of exceeding the 8-second threshold in the next measurement.</p>
-                        <ol>
+                        <p class="mb-2">This tool analyzes your transaction response time data and predicts which transactions are at risk of exceeding the 8-second threshold in the next measurement.</p>
+                        <ol class="mb-0 ps-3">
                             <li>Upload your CSV file with transaction response time data</li>
                             <li>The system will analyze the data using machine learning</li>
                             <li>View a detailed report of predictions for each transaction</li>
@@ -117,10 +208,11 @@
 
     <div class="footer text-center">
         <div class="container">
-            <p>Performance Monitoring System &copy; 2025</p>
+            <p class="mb-0">Performance Monitoring System &copy; 2025 - Created by Allard Veldman</p>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('file-upload').addEventListener('change', function() {
             const fileName = this.files[0] ? this.files[0].name : '';
