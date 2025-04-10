@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV Prediction Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Load Time Prediction Tool</h1>
+        <p>Upload your CSV file to predict whether load times will exceed 8 seconds.</p>
+        
+        <form action="/predict" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Select CSV File:</label>
+                <input type="file" id="file" name="file" accept=".csv" required>
+            </div>
+            <button type="submit" class="btn">Generate Predictions</button>
+        </form>
+        
+        <div class="info">
+            <h3>CSV Format Requirements:</h3>
+            <ul>
+                <li>The CSV should contain a 'time' column in the format 'DD-MM HH:MM'</li>
+                <li>Each column represents a different metric to predict</li>
+                <li>Missing values should be represented as '-'</li>
+                <li>Decimal values should use comma as separator (e.g., '7,5')</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -9,6 +9,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 import matplotlib.dates as mdates
 from xgboost import XGBClassifier
+import pickle
 
 # Define converters to handle specific formatting in the CSV
 converters = {col: lambda x: float(x.replace(',', '.')) if x != '-' else None for col in pd.read_csv('../data/datasheet.csv').columns if col != 'time'}
@@ -184,6 +185,11 @@ best_model = grid_search.best_estimator_
 y_pred = best_model.predict(X_test_scaled)
 print("\nTuned Model Performance:")
 print(classification_report(y_test, y_pred))
+
+
+# Save the best model and scaler for later use
+pickle.dump(best_model, open('best_model.pkl', 'wb'))
+pickle.dump(scaler, open('scaler.pkl', 'wb'))
 
 
 # Function to predict if the next load time will breach the threshold of 8 seconds
