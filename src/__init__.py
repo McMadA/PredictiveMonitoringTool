@@ -6,6 +6,7 @@ from sklearn.metrics import classification_report, accuracy_score, precision_rec
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix
 from sklearn.svm import SVC
 import matplotlib.dates as mdates
 from xgboost import XGBClassifier
@@ -119,14 +120,19 @@ for name, model in models.items():
     # Make predictions
     y_pred = model.predict(X_test_scaled)
     # Evaluate the model
+
     accuracy = accuracy_score(y_test, y_pred)
     precision, recall, f1, _ = precision_recall_fscore_support(y_test, y_pred, average='binary')
-    
+    cm = confusion_matrix(y_test, y_pred)
+    TN, FP, FN, TP = confusion_matrix(y_test, y_pred).ravel()
+    binairyaccuracy =  (TP + TN) / (TP + FP + TN + FN)
+
     results[name] = {
         'accuracy': accuracy,
         'precision': precision,
         'recall': recall,
-        'f1': f1
+        'f1': f1,
+        'confusion_matrix': cm
     }
     
     print(f"\n{name} Performance:")
@@ -134,6 +140,12 @@ for name, model in models.items():
     print(f"Precision: {precision:.4f}")
     print(f"Recall: {recall:.4f}")
     print(f"F1 Score: {f1:.4f}")
+    print(f"\n{name} Confusion Matrix:")
+    print('True Positive(TP)  = ', TP)
+    print('False Positive(FP) = ', FP)
+    print('True Negative(TN)  = ', TN)
+    print('False Negative(FN) = ', FN)
+    print('Accuracy of the binary classifier= {:0.3f}'.format(binairyaccuracy))
     print("\nClassification Report:")
     print(classification_report(y_test, y_pred))
 
