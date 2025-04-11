@@ -78,16 +78,16 @@
 <body>
     <div class="header text-center">
         <div class="container">
-            <h1><i class="bi bi-graph-up"></i> Performance Prediction Results</h1>
-            <p class="lead">Analysis of transaction response times</p>
-            <p class="timestamp">Generated on: {{ timestamp }}</p>
+            <h1><i class="bi bi-graph-up"></i> Laadtijd Voorspelling </h1>
+            <p class="lead">Analyse van laadtijden door middel van Achmea Machine learning model</p>
+            <p class="timestamp">Gegenereerd op: {{ timestamp }}</p>
         </div>
     </div>
 
     <div class="container">
         <div class="row mb-4">
             <div class="col-12 text-center">
-                <a href="/" class="btn btn-back"><i class="bi bi-arrow-left"></i> Back to Upload</a>
+                <a href="/" class="btn btn-back"><i class="bi bi-arrow-left"></i> Terug naar Upload</a>
             </div>
         </div>
 
@@ -95,24 +95,24 @@
             <div class="col-md-12 mb-4">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title"><i class="bi bi-info-circle"></i> Summary</h4>
-                        <p>This report shows the probability of each transaction exceeding the 8-second threshold in the next measurement.</p>
+                        <h4 class="card-title"><i class="bi bi-info-circle"></i> Samenvatting</h4>
+                        <p>Dit report laat de kans zien van elke transactie die boven de 8 seconden dreigd te komen bij de volgende meting.</p>
                         <div class="row">
                             <div class="col-md-4 text-center">
                                 <div class="p-3 bg-success bg-opacity-25 rounded">
-                                    <h5>Low Risk</h5>
+                                    <h5>Laag Risico</h5>
                                     <h2>{{ results|selectattr('risk_level', 'equalto', 'low')|list|length }}</h2>
                                 </div>
                             </div>
                             <div class="col-md-4 text-center">
                                 <div class="p-3 bg-warning bg-opacity-25 rounded">
-                                    <h5>Medium Risk</h5>
+                                    <h5>Mogelijk Risico</h5>
                                     <h2>{{ results|selectattr('risk_level', 'equalto', 'medium')|list|length }}</h2>
                                 </div>
                             </div>
                             <div class="col-md-4 text-center">
                                 <div class="p-3 bg-danger bg-opacity-25 rounded">
-                                    <h5>High Risk</h5>
+                                    <h5>Hoog Risico</h5>
                                     <h2>{{ results|selectattr('risk_level', 'equalto', 'high')|list|length }}</h2>
                                 </div>
                             </div>
@@ -122,7 +122,7 @@
             </div>
         </div>
 
-        <h3 class="mb-4"><i class="bi bi-list-check"></i> Detailed Results</h3>
+        <h3 class="mb-4"><i class="bi bi-list-check"></i> Gedetailleerde Resultaten</h3>
         
         <div class="row">
             {% for result in results %}
@@ -133,12 +133,12 @@
                         <p class="card-text">
                             <strong>Laatst gemeten:</strong> {{ "%.2f"|format(result.latest_value) }} seconden<br>
                             {% if result.prediction == 1 %}
-                                <span class="badge bg-danger">Predicted to exceed threshold</span>
+                                <span class="badge bg-danger">Voorspeld dat de drempel wordt overschreden</span>
                             {% else %}
-                                <span class="badge bg-success">Predicted to be within threshold</span>
+                                <span class="badge bg-success">Voorspeld dat het binnen de drempel blijft</span>
                             {% endif %}
                         </p>
-                        <p class="mb-1">Probability of exceeding threshold:</p>
+                        <p class="mb-1">Voorspeld dat de drempel wordt overschreden:</p>
                         <div class="progress mb-3">
                             <div class="progress-bar progress-bar-{{ result.risk_level }}" 
                                  role="progressbar" 
@@ -149,7 +149,7 @@
                             </div>
                         </div>
                         <p class="text-{{ result.risk_level == 'low' and 'success' or (result.risk_level == 'medium' and 'warning' or 'danger') }}">
-                            {{ (result.probability * 100)|int }}% chance
+                            {{ (result.probability * 100)|int }}% kans
                             {% if result.risk_level == 'low' %}
                                 <i class="bi bi-emoji-smile"></i>
                             {% elif result.risk_level == 'medium' %}
@@ -167,7 +167,7 @@
 
     <div class="footer text-center">
         <div class="container">
-            <p>Performance Monitoring System - Created by Allard Veldman &copy; {{ timestamp.split('-')[0] }}</p>
+            <p>Predictive Monitoring Tool&copy; 2025 - Gemaakt door Allard Veldman{{ timestamp.split('-')[0] }}</p>
         </div>
     </div>
 
