@@ -11,8 +11,8 @@ app = Flask(__name__)
 # Load your trained model and scaler    
 # Assuming you've saved these using pickle
 try:
-    best_model = pickle.load(open('src/best_model.pkl', 'rb'))
-    scaler = pickle.load(open('src/scaler.pkl', 'rb'))
+    best_model = pickle.load(open('notebooks/best_model.pkl', 'rb'))
+    scaler = pickle.load(open('notebooks/scaler.pkl', 'rb'))
 except Exception as e:
     print(f"Error loading model files: {str(e)}")
     # Define a flag to check if models are loaded
