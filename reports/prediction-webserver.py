@@ -8,8 +8,6 @@ from datetime import datetime
 # Initialize Flask app
 app = Flask(__name__)
 
-# Load your trained model and scaler    
-# Assuming you've saved these using pickle
 try:
     best_model = pickle.load(open('notebooks/best_model.pkl', 'rb'))
     scaler = pickle.load(open('notebooks/scaler.pkl', 'rb'))

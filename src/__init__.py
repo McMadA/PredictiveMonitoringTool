@@ -146,8 +146,13 @@ for name, model in models.items():
     print('True Negative(TN)  = ', TN)
     print('False Negative(FN) = ', FN)
     print('Accuracy of the binary classifier= {:0.3f}'.format(binairyaccuracy))
-    print("\nClassification Report:")
+    print(f"\n{name} Classification Report:")
     print(classification_report(y_test, y_pred))
+    print("------------------------------")
+
+# Choose the best model based on F1 score
+best_model_name = max(results, key=lambda x: results[x]['f1'])
+print(f"\nBest model: {best_model_name} with F1 Score: {results[best_model_name]['f1']:.4f}")
 
 # Choose the best model based on F1 score
 best_model_name = max(results, key=lambda x: results[x]['f1'])
