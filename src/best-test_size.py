@@ -85,7 +85,7 @@ test_sizes = [0.1, 0.2, 0.3, 0.4, 0.5]  # Example test sizes to evaluate
 for test_size in test_sizes:
     print(f"\n=== Testing with test size: {test_size} ===\n")
     # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=69)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
 
     # Scale the features
     scaler = StandardScaler()
@@ -120,7 +120,7 @@ for test_size in test_sizes:
             'f1': f1
         }
         print(f"{name} - F1 Score: {f1:.4f}")
-        
+
         
 
     # Choose the best model based on F1 score
