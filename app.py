@@ -19,7 +19,7 @@ else:
     models_loaded = True
 
 #Define window size as in your original code
-window_size = 10
+window_size = 11
 
 @app.route('/')
 def index():
