@@ -18,7 +18,7 @@ except Exception as e:
 else:
     models_loaded = True
 
-Define window size as in your original code
+#Define window size as in your original code
 window_size = 10
 
 @app.route('/')
