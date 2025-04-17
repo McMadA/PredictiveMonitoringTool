@@ -8,17 +8,17 @@ from datetime import datetime
 # Initialize Flask app
 app = Flask(__name__)
 
-# try:
-#     best_model = pickle.load(open('defenitive-software/best_model.pkl', 'rb'))
-#     scaler = pickle.load(open('defenitive-software/scaler.pkl', 'rb'))
-# except Exception as e:
-#     print(f"Error loading model files: {str(e)}")
-#     # Define a flag to check if models are loaded
-#     models_loaded = False
-# else:
-#     models_loaded = True
+try:
+    best_model = pickle.load(open('defenitive-software/best_model.pkl', 'rb'))
+    scaler = pickle.load(open('defenitive-software/scaler.pkl', 'rb'))
+except Exception as e:
+    print(f"Error loading model files: {str(e)}")
+    # Define a flag to check if models are loaded
+    models_loaded = False
+else:
+    models_loaded = True
 
-# Define window size as in your original code
+Define window size as in your original code
 window_size = 10
 
 @app.route('/')
