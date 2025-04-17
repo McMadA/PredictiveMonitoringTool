@@ -23,6 +23,7 @@ window_size = 10
 
 @app.route('/')
 def home():
+    print('Request for index page received')
     return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
