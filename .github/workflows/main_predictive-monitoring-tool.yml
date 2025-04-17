@@ -78,4 +78,3 @@ jobs:
           app-name: 'Predictive-Monitoring-Tool'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_8AA119A401C94A63AEEB3E3642DABFD1 }}
-          startup-command: 'gunicorn --bind=0.0.0.0 --timeout 600 prediction-webserver:app'
