@@ -6,5 +6,4 @@ scipy
 joblib
 matplotlib
 flask
-pickle
 datetime
