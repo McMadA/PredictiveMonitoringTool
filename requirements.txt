@@ -1,4 +1,12 @@
-flask
+ipykernel
+python-dotenv
 pandas
 numpy
+scipy
+joblib
+matplotlib
+flask
 datetime
+gunicorn 
+xgboost
+scikit-learn
