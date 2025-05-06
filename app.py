@@ -5,7 +5,7 @@ import io
 import pickle
 from datetime import datetime
 
-# Initialize Flask app
+# Initialize Flask appp
 app = Flask(__name__)
 
 try:
