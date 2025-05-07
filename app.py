@@ -4,8 +4,11 @@ import numpy as np
 import io
 import pickle
 from datetime import datetime
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
-# Initialize Flask appp
+# Initialize Flask app
 app = Flask(__name__)
 
 try:
@@ -18,11 +21,31 @@ except Exception as e:
 else:
     models_loaded = True
 
-#Define window size as in your original code
+# Define window size as in your original code
 window_size = 11
 
+def send_email_alert(to_email, transaction, probability, risk_level):
+    message = Mail(
+        from_email='info@ictzuidhorn.nl',
+        to_emails=to_email,
+        subject='⚠️ Hoog risico gedetecteerd',
+        html_content=f"""
+            <strong>Let op:</strong><br>
+            Transactie: {transaction}<br>
+            Risiconiveau: <b>{risk_level.upper()}</b><br>
+            Waarschijnlijkheid: {round(probability*100, 2)}%
+        """
+    )
+    try:
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(message)
+        print(f"Email verzonden: {response.status_code}")
+    except Exception as e:
+        print(f"Fout bij verzenden van email: {str(e)}")
+
+
 @app.route('/')
-def index():
+def home():
     print('Request for index page received')
     return render_template('index.html')
 
@@ -37,6 +60,8 @@ def predict():
 
     if file.filename == '':
         return "No selected file"
+    
+    user_email=request.form.get('email')
 
     if file:
         df = pd.read_csv(file, encoding='utf-8', skiprows=2)
@@ -117,6 +142,7 @@ def predict():
                         risk_level = "medium"
                     else:
                         risk_level = "high"
+                        send_email_alert(user_email, col, probability, risk_level)
 
                     #Latest value of each column
                     latest_value = df[col].iloc[-1]

@@ -171,6 +171,11 @@
                 
                 <div class="upload-container">
                     <form action="/predict" method="post" enctype="multipart/form-data">
+                        <div class="d-flex flex-column align-items-center mt-3">
+                            <p class="mb-0">Ontvang de resultaten per e-mail:</p>
+                            <input type="email" name="email" class="form-control" style="max-width: 300px;" placeholder="example@example.com">
+                        </div>
+                        <br>
                         <div class="text-center mb-3">
                             <i class="bi bi-cloud-arrow-up upload-icon"></i>
                             <h3 class="h4">Upload Data</h3>
@@ -188,6 +193,7 @@
                                 <i class="bi bi-lightning-charge"></i> Genereer Voorspelling
                             </button>
                         </div>
+                            
                     </form>
                 </div>
                 
