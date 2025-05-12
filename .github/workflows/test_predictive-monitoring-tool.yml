@@ -64,7 +64,16 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
+      - name: set SendGrid API Key for using in app.py
+        uses: azure/appservice-settings@v1
+        with:
+          app-name: 'Predictive-Monitoring-Tool'
+          slot-name: 'Production'
+          app-settings-json: |
+            {
+              "SENDGRID_API_KEY": "${{ secrets.SENDGRID_API_KEY }}"
+            }
+          
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
@@ -72,3 +81,7 @@ jobs:
           app-name: 'Predictive-Monitoring-Tool'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_BC35D8BAB49943A5BD36D3461A9D2CFF }}
+
+
+
+
