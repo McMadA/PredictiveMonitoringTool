@@ -78,14 +78,21 @@ jobs:
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
-          
+      
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID}}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID}}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID}}
+
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'Predictive-Monitoring-Tool'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_BC35D8BAB49943A5BD36D3461A9D2CFF }}
         env:
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
 
