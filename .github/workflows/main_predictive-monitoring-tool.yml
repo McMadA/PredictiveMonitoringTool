@@ -14,10 +14,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read          # Vereist voor actions/checkout
+      security-events: write  # Vereist om CodeQL-resultaten te uploaden naar de Security tab
+      actions: read           # Vereist voor github/codeql-action/init
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Initialiseer CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python
 
       - name: Set up Python version
         uses: actions/setup-python@v5
@@ -31,6 +38,11 @@ jobs:
       
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Voer CodeQL-analyse uit
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:python" # Helpt bij het correct categoriseren van resultaten
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
@@ -51,6 +63,9 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
     
     steps:
       - name: Download artifact from build job
@@ -69,3 +84,5 @@ jobs:
           app-name: 'Predictive-Monitoring-Tool'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3DBBF1F3F6964034B1E97B4321D12BF5 }}
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
