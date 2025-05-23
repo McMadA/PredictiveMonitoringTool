@@ -4,173 +4,597 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Performance Prediction Results</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-white: #ffffff;
+            --secondary-gray: #f5f5f7;
+            --text-primary: #1d1d1f;
+            --text-secondary: #86868b;
+            --accent-blue: #0071e3;
+            --success-green: #30d158;
+            --warning-orange: #ff9500;
+            --error-red: #ff3b30;
+            --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 8px 40px rgba(0, 0, 0, 0.12);
+            --border-radius: 16px;
+            --animation-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
         body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
-        .header {
-            background-color: #343a40;
-            color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-white) 0%, var(--secondary-gray) 100%);
+            padding: 80px 0 60px;
+            position: relative;
+            overflow: hidden;
         }
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(0, 113, 227, 0.1) 0%, transparent 50%);
+            pointer-events: none;
         }
-        .card:hover {
-            transform: translateY(-5px);
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
         }
-        .risk-low {
-            background-color: #d4edda;
-            border-left: 5px solid #28a745;
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s var(--animation-spring) forwards;
         }
-        .risk-medium {
-            background-color: #fff3cd;
-            border-left: 5px solid #ffc107;
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .risk-high {
-            background-color: #f8d7da;
-            border-left: 5px solid #dc3545;
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-weight: 400;
         }
-        .progress {
-            height: 10px;
-            border-radius: 5px;
-        }
-        .progress-bar-low {
-            background-color: #28a745;
-        }
-        .progress-bar-medium {
-            background-color: #ffc107;
-        }
-        .progress-bar-high {
-            background-color: #dc3545;
-        }
-        .footer {
-            background-color: #343a40;
-            color: white;
-            padding: 1rem 0;
-            margin-top: 2rem;
-        }
-        .btn-back {
-            background-color: #343a40;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .btn-back:hover {
-            background-color: #212529;
-        }
+
         .timestamp {
-            font-size: 0.9rem;
-            color: #6c757d;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-blue);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s var(--animation-spring);
+            box-shadow: var(--shadow-light);
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            color: white;
+            text-decoration: none;
+        }
+
+        .main-content {
+            padding: 60px 0;
+        }
+
+        .summary-card {
+            background: var(--primary-white);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            margin-bottom: 60px;
+            box-shadow: var(--shadow-light);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s var(--animation-spring) 0.2s forwards;
+        }
+
+        .summary-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .summary-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+        }
+
+        .stat-card {
+            background: var(--secondary-gray);
+            border-radius: 12px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: all 0.3s var(--animation-spring);
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .stat-card.low {
+            border-left: 4px solid var(--success-green);
+        }
+
+        .stat-card.medium {
+            border-left: 4px solid var(--warning-orange);
+        }
+
+        .stat-card.high {
+            border-left: 4px solid var(--error-red);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .results-section {
+            margin-top: 60px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+        }
+
+        .result-card {
+            background: var(--primary-white);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            box-shadow: var(--shadow-light);
+            transition: all 0.4s var(--animation-spring);
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .result-card.low::before {
+            background: var(--success-green);
+        }
+
+        .result-card.medium::before {
+            background: var(--warning-orange);
+        }
+
+        .result-card.high::before {
+            background: var(--error-red);
+        }
+
+        .result-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .card-meta {
+            margin-bottom: 24px;
+        }
+
+        .latest-value {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .prediction-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: rgba(48, 209, 88, 0.1);
+            color: var(--success-green);
+        }
+
+        .badge-danger {
+            background: rgba(255, 59, 48, 0.1);
+            color: var(--error-red);
+        }
+
+        .progress-section {
+            margin-top: 24px;
+        }
+
+        .progress-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--secondary-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1.5s var(--animation-spring) 0.5s;
+            position: relative;
+        }
+
+        .progress-fill.low {
+            background: linear-gradient(90deg, var(--success-green), #4ade80);
+        }
+
+        .progress-fill.medium {
+            background: linear-gradient(90deg, var(--warning-orange), #fbbf24);
+        }
+
+        .progress-fill.high {
+            background: linear-gradient(90deg, var(--error-red), #f87171);
+        }
+
+        .probability-text {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 500;
+        }
+
+        .probability-percentage {
+            font-size: 1.125rem;
+        }
+
+        .emoji {
+            font-size: 1.5rem;
+        }
+
+        .footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 40px 0;
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 0 40px;
+            }
+
+            .container {
+                padding: 0 16px;
+            }
+
+            .summary-card {
+                padding: 24px;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-card {
+                padding: 24px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header text-center">
+    <!-- Hero Section -->
+    <section class="hero-section">
         <div class="container">
-            <h1><i class="bi bi-graph-up"></i> Laadtijd Voorspelling </h1>
-            <p class="lead">Analyse van laadtijden door middel van Achmea Machine learning model</p>
-            <p class="timestamp">Gegenereerd op: {{ timestamp }}</p>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-12 text-center">
-                <a href="/" class="btn btn-back"><i class="bi bi-arrow-left"></i> Terug naar Upload</a>
+            <div class="hero-content">
+                <h1 class="hero-title">Laadtijd Voorspelling</h1>
+                <p class="hero-subtitle">Analyse van laadtijden door middel van Achmea Machine learning model</p>
+                <p class="timestamp">Gegenereerd op: {{ timestamp }}</p>
+                <a href="/" class="back-button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Terug naar Upload
+                </a>
             </div>
         </div>
+    </section>
 
-        <div class="row">
-            <div class="col-md-12 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title"><i class="bi bi-info-circle"></i> Samenvatting</h4>
-                        <p>Dit report laat de kans zien van elke transactie die boven de 8 seconden dreigd te komen bij de volgende meting.</p>
-                        <div class="row">
-                            <div class="col-md-4 text-center">
-                                <div class="p-3 bg-success bg-opacity-25 rounded">
-                                    <h5>Laag Risico</h5>
-                                    <h2>{{ results|selectattr('risk_level', 'equalto', 'low')|list|length }}</h2>
-                                </div>
-                            </div>
-                            <div class="col-md-4 text-center">
-                                <div class="p-3 bg-warning bg-opacity-25 rounded">
-                                    <h5>Mogelijk Risico</h5>
-                                    <h2>{{ results|selectattr('risk_level', 'equalto', 'medium')|list|length }}</h2>
-                                </div>
-                            </div>
-                            <div class="col-md-4 text-center">
-                                <div class="p-3 bg-danger bg-opacity-25 rounded">
-                                    <h5>Hoog Risico</h5>
-                                    <h2>{{ results|selectattr('risk_level', 'equalto', 'high')|list|length }}</h2>
-                                </div>
-                            </div>
-                        </div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Summary Card -->
+            <div class="summary-card">
+                <h2 class="summary-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4M12 8h.01"/>
+                    </svg>
+                    Samenvatting
+                </h2>
+                <p class="summary-description">
+                    Dit rapport toont de kans van elke transactie die boven de 8 seconden dreigt te komen bij de volgende meting.
+                </p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card low">
+                        <div class="stat-number" id="low-count">{{ results|selectattr('risk_level', 'equalto', 'low')|list|length }}</div>
+                        <div class="stat-label">Laag Risico</div>
+                    </div>
+                    <div class="stat-card medium">
+                        <div class="stat-number" id="medium-count">{{ results|selectattr('risk_level', 'equalto', 'medium')|list|length }}</div>
+                        <div class="stat-label">Mogelijk Risico</div>
+                    </div>
+                    <div class="stat-card high">
+                        <div class="stat-number" id="high-count">{{ results|selectattr('risk_level', 'equalto', 'high')|list|length }}</div>
+                        <div class="stat-label">Hoog Risico</div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <h3 class="mb-4"><i class="bi bi-list-check"></i> Gedetailleerde Resultaten</h3>
-        
-        <div class="row">
-            {% for result in results %}
-            <div class="col-md-6">
-                <div class="card risk-{{ result.risk_level }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ result.transaction }}</h5>
-                        <p class="card-text">
-                            <strong>Laatst gemeten:</strong> {{ "%.2f"|format(result.latest_value) }} seconden<br>
+            <!-- Results Section -->
+            <section class="results-section">
+                <h2 class="section-title">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3h18v18H3zM9 9h6v6H9z"/>
+                    </svg>
+                    Gedetailleerde Resultaten
+                </h2>
+                
+                <div class="results-grid">
+                    {% for result in results %}
+                    <div class="result-card {{ result.risk_level }}" data-delay="{{ loop.index0 * 100 }}">
+                        <h3 class="card-title">{{ result.transaction }}</h3>
+                        
+                        <div class="card-meta">
+                            <div class="latest-value">
+                                <strong>Laatst gemeten:</strong> {{ "%.2f"|format(result.latest_value) }} seconden
+                            </div>
+                            
                             {% if result.prediction == 1 %}
-                                <span class="badge bg-danger">Voorspeld dat de drempel wordt overschreden</span>
+                                <span class="prediction-badge badge-danger">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                                    </svg>
+                                    Drempel wordt overschreden
+                                </span>
                             {% else %}
-                                <span class="badge bg-success">Voorspeld dat het binnen de drempel blijft</span>
+                                <span class="prediction-badge badge-success">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Binnen de drempel
+                                </span>
                             {% endif %}
-                        </p>
-                        <p class="mb-1">Voorspeld dat de drempel wordt overschreden:</p>
-                        <div class="progress mb-3">
-                            <div class="progress-bar progress-bar-{{ result.risk_level }}" 
-                                 role="progressbar" 
-                                 style="width: {{ (result.probability * 100)|int }}%;" 
-                                 aria-valuenow="{{ (result.probability * 100)|int }}" 
-                                 aria-valuemin="0" 
-                                 aria-valuemax="100">
+                        </div>
+
+                        <div class="progress-section">
+                            <div class="progress-label">Kans op overschrijding:</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill {{ result.risk_level }}" 
+                                     data-width="{{ (result.probability * 100)|int }}%"
+                                     style="width: 0%;">
+                                </div>
+                            </div>
+                            <div class="probability-text">
+                                <span class="probability-percentage">{{ (result.probability * 100)|int }}% kans</span>
+                                <span class="emoji">
+                                    {% if result.risk_level == 'low' %}
+                                        😊
+                                    {% elif result.risk_level == 'medium' %}
+                                        😐
+                                    {% else %}
+                                        😟
+                                    {% endif %}
+                                </span>
                             </div>
                         </div>
-                        <p class="text-{{ result.risk_level == 'low' and 'success' or (result.risk_level == 'medium' and 'warning' or 'danger') }}">
-                            {{ (result.probability * 100)|int }}% kans
-                            {% if result.risk_level == 'low' %}
-                                <i class="bi bi-emoji-smile"></i>
-                            {% elif result.risk_level == 'medium' %}
-                                <i class="bi bi-emoji-neutral"></i>
-                            {% else %}
-                                <i class="bi bi-emoji-frown"></i>
-                            {% endif %}
-                        </p>
                     </div>
+                    {% endfor %}
                 </div>
-            </div>
-            {% endfor %}
+            </section>
         </div>
-    </div>
+    </main>
 
-    <div class="footer text-center">
+    <!-- Footer -->
+    <footer class="footer">
         <div class="container">
-            <p>Predictive Monitoring Tool&copy; 2025 - Gemaakt door Allard Veldman{{ timestamp.split('-')[0] }}</p>
+            <p class="footer-text">
+                Predictive Monitoring Tool © 2025 - Gemaakt door Allard Veldman
+            </p>
         </div>
-    </div>
+    </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Animate cards on load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate result cards
+            const cards = document.querySelectorAll('.result-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.animation = `fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards`;
+                }, index * 100);
+            });
+
+            // Animate progress bars
+            setTimeout(() => {
+                const progressBars = document.querySelectorAll('.progress-fill');
+                progressBars.forEach(bar => {
+                    const width = bar.getAttribute('data-width');
+                    bar.style.width = width;
+                });
+            }, 500);
+
+            // Animate counters
+            animateCounters();
+
+            // Add hover effects to stat cards
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            counters.forEach(counter => {
+                const target = parseInt(counter.textContent);
+                let current = 0;
+                const increment = target / 30;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current);
+                    }
+                }, 50);
+            });
+        }
+
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add parallax effect to hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.hero-section::before');
+            if (parallax) {
+                const speed = scrolled * 0.5;
+                parallax.style.transform = `translateY(${speed}px)`;
+            }
+        });
+    </script>
 </body>
 </html>

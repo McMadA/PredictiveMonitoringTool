@@ -1,257 +1,658 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Predictive Monitoring Tool</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
-        .header {
-            background-color: #343a40;
-            color: white;
-            padding: 1rem 0;
-            margin-bottom: 1rem;
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        .upload-container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            margin-bottom: 1rem;
+        
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.18);
         }
-        .footer {
-            background-color: #343a40;
-            color: white;
-            padding: 0.5rem 0;
-            margin-top: auto;
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .upload-icon {
-            font-size: 3rem;
-            color: #343a40;
-            margin-bottom: 0.5rem;
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
         }
-        .custom-file-upload {
-            border: 2px dashed #dee2e6;
-            border-radius: 10px;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
+        
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.6s ease-out;
+        }
+        
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 20px rgba(102, 126, 234, 0.4); }
+            to { box-shadow: 0 0 30px rgba(102, 126, 234, 0.8); }
+        }
+        
+        .drag-active {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-color: #667eea;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             transition: all 0.3s ease;
         }
-        .custom-file-upload:hover {
-            border-color: #343a40;
-            background-color: #f8f9fa;
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
         }
-        .btn-predict {
-            background-color: #343a40;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
+        
+        .btn-primary:active {
+            transform: translateY(0);
         }
-        .btn-predict:hover {
-            background-color: #212529;
+        
+        .parallax {
+            transform: translateZ(0);
+            will-change: transform;
         }
-        #file-name {
-            margin-top: 0.5rem;
-            font-weight: bold;
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .instructions-card {
-            margin-bottom: 1rem;
-        }
-        .step {
-            margin-bottom: 0.25rem;
-            padding-left: 1.25rem;
-            position: relative;
-        }
-        .step-number {
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-        .substep {
-            margin-left: 1.25rem;
-            margin-bottom: 0.15rem;
-        }
-        .accordion-button:not(.collapsed) {
-            background-color: #e9ecef;
-            color: #212529;
-        }
-        .card-body {
-            padding: 1rem;
-        }
-        .card-title {
-            font-size: 1.1rem;
-        }
-        p, .step p {
-            margin-bottom: 0.5rem;
-        }
-        h6 {
-            font-size: 1rem;
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+                line-height: 1.1;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="header text-center">
-        <div class="container">
-            <h1 class="h3"><i class="bi bi-graph-up"></i>Predictive Monitoring Tool</h1>
-            <p class="lead mb-0">Upload je CSV bestand om een voorspelling te maken!</p>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card instructions-card">
-                    <div class="card-header p-2">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link w-100 text-start text-decoration-none p-0" type="button" data-bs-toggle="collapse" data-bs-target="#csvInstructions" aria-expanded="false" aria-controls="csvInstructions">
-                                <i class="bi bi-question-circle"></i> Handleiding: CSV-bestand maken voor Machine Learning POC
-                            </button>
-                        </h5>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-effect">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
                     </div>
-                    <div id="csvInstructions" class="collapse">
-                        <div class="card-body">
-                            <p>Voordat u een CSV-bestand kunt uploaden naar het voorspellingsportaal, moet u eerst de juiste gegevens exporteren uit APM. Hieronder vindt u een stapsgewijze handleiding voor het genereren van het benodigde CSV-bestand:</p>
-                            
-                            <h6 class="mt-3 mb-2">Stappen voor het maken van een CSV-bestand uit APM</h6>
-                            
-                            <div class="step"><span class="step-number">1.</span> <strong>Log in op APM - P</strong>
-                                <p class="mb-1">Open de APM Performance-omgeving en meld u aan met uw gebruikersgegevens.</p>
-                            </div>
-                            
-                            <div class="step"><span class="step-number">2.</span> <strong>Navigeer naar User Reports</strong>
-                                <p class="mb-1">Ga naar het menu "Applications" en selecteer "User Reports".</p>
-                            </div>
-                            
-                            <div class="step"><span class="step-number">3.</span> <strong>Zoek het rapport "Machine Learning POC"</strong>
-                                <p class="mb-1">Gebruik de zoekfunctie om te zoeken op naam: "Machine Learning POC"</p>
-                                <p class="mb-1 fst-italic">Dit rapport is als volgt gemaakt:</p>
-                                <div class="substep">a. Klik op "Nieuw" en selecteer "Aangepast Report"</div>
-                                <div class="substep">b. Vul bij Report Properties de titel, naam en beschrijving in als 'Machine Learning POC'</div>
-                                <div class="substep">c. Voeg een nieuw Report Component toe via "Add new component" → "End User Management" → "Analysis Report"</div>
-                                <div class="substep">d. Selecteer "Metrics over Time" als rapporttype, met weergave "Table" en formaat "Narrow"</div>
-                                <div class="substep">e. Bewerk de filter:
-                                    <div class="ms-3">i. Bij Applications selecteer "ACHMEA.FBTO.nl"</div>
-                                    <div class="ms-3">ii. Bij Active Filters ga naar Transactions en selecteer "FBTO_PREMIE_BEREKENEN_AUTO"</div>
-                                </div>
-                            </div>
-                            
-                            <div class="step"><span class="step-number">4.</span> <strong>Open het rapport</strong>
-                                <p class="mb-1">Dubbelklik op de naam van het rapport om het te openen.</p>
-                            </div>
-                            
-                            <div class="step"><span class="step-number">5.</span> <strong>Pas de weergave-instellingen aan</strong>
-                                <p class="mb-1">Wijzig de View naar "Custom", stel een tijdspanne in van 2,5 uur, en stel het interval in op "Every 5 minutes".</p>
-                            </div>
-                            
-                            <div class="step"><span class="step-number">6.</span> <strong>Genereer het rapport</strong>
-                                <p class="mb-1">Klik op de knop "Generate" om het rapport te maken.</p>
-                            </div>
-                            
-                            <div class="step"><span class="step-number">7.</span> <strong>Selecteer de benodigde kolommen</strong>
-                                <p class="mb-1">Selecteer de kolommen "Transaction" en "Transaction Response Time (sec.)"</p>
-                            </div>
-                            
-                            <div class="step"><span class="step-number">8.</span> <strong>Exporteer naar CSV-formaat</strong>
-                                <p class="mb-1">Klik op "Open in CSV Format". Het bestand wordt automatisch gedownload naar uw Downloads-map (./Downloads)</p>
-                            </div>
-                        </div>
-                    </div>
+                    <span class="text-xl font-semibold text-gray-900">Predictive</span>
                 </div>
-                
-                <div class="upload-container">
-                    <form action="/predict" method="post" enctype="multipart/form-data">
-                        <div class="d-flex flex-column align-items-center mt-3">
-                            <p class="mb-0">Ontvang de resultaten per e-mail:</p>
-                            <input type="email" name="email" class="form-control" style="max-width: 300px;" placeholder="example@example.com">
-                        </div>
-                        <br>
-                        <div class="text-center mb-3">
-                            <i class="bi bi-cloud-arrow-up upload-icon"></i>
-                            <h3 class="h4">Upload Data</h3>
-                            <p class="mb-2">Selecteer een CSV bestand met laadtijden uit APM</p>
-                        </div>
-                        
-                        <label for="file-upload" class="custom-file-upload w-100">
-                            <i class="bi bi-file-earmark-text"></i> Kies een CSV-bestand of sleep hierheen
-                        </label>
-                        <input id="file-upload" type="file" name="file" style="display: none;" accept=".csv">
-                        <div id="file-name" class="text-center"></div>
-                        
-                        <div class="text-center mt-3">
-                            <button type="submit" class="btn btn-predict" id="predict-btn" disabled>
-                                <i class="bi bi-lightning-charge"></i> Genereer Voorspelling
-                            </button>
-                        </div>
-                            
-                    </form>
-                </div>
-                
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-info-circle"></i> Hoe het werkt</h5>
-                        <p class="mb-2">Deze tool analyseert je transactieresponstijdgegevens en voorspelt welke transacties het risico lopen om bij de volgende meting de drempel van 8 seconden te overschrijden.</p>
-                        <ol class="mb-0 ps-3">
-                            <li>Upload je CSV-bestand met transactieresponstijdgegevens</li>
-                            <li>Het systeem analyseert de gegevens met behulp van machine learning</li>
-                            <li>Bekijk een gedetailleerd rapport met voorspellingen per transactie</li>
-                        </ol>
-                    </div>                    
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
+                    <a href="#how-it-works" class="text-gray-600 hover:text-gray-900 transition-colors">Hoe het werkt</a>
+                    <a href="#upload" class="text-gray-600 hover:text-gray-900 transition-colors">Upload</a>
                 </div>
             </div>
         </div>
-    </div>
+    </nav>
 
-    <div class="footer text-center">
-        <div class="container">
-            <p class="mb-0">Predictive Monitoring Tool&copy; 2025 - Gemaakt door Allard Veldman</p>
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div class="absolute inset-0 gradient-bg opacity-5"></div>
+        <div class="max-w-7xl mx-auto text-center relative">
+            <div class="fade-in-up">
+                <h1 class="hero-title text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+                    Voorspel de
+                    <span class="text-gradient">toekomst</span>
+                    van je systeem
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+                    Gebruik machine learning om proactief performance problemen op te sporen 
+                    voordat ze impact hebben op je gebruikers.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button onclick="scrollToUpload()" class="btn-primary text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-xl">
+                        Start nu!
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Floating Elements -->
+            <div class="absolute top-20 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-20 floating" style="animation-delay: 0s;"></div>
+            <div class="absolute top-40 right-20 w-16 h-16 bg-purple-200 rounded-full opacity-20 floating" style="animation-delay: 2s;"></div>
+            <div class="absolute bottom-20 left-1/4 w-12 h-12 bg-indigo-200 rounded-full opacity-20 floating" style="animation-delay: 4s;"></div>
         </div>
-    </div>
+    </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 fade-in-up">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                    Krachtige <span class="text-gradient">AI-gedreven</span> inzichten
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Ontdek patronen in je data die onzichtbaar zijn voor het menselijk oog
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card-hover bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">Real-time Analyse</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Analyseer je APM data in real-time en krijg directe inzichten in performance trends en anomalieën.
+                    </p>
+                </div>
+                
+                <div class="card-hover bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">Predictive Alerts</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Ontvang proactieve waarschuwingen voordat performance problemen zich voordoen in je systemen.
+                    </p>
+                </div>
+                
+                <div class="card-hover bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+                    <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M8 6v12a2 2 0 002 2h4a2 2 0 002-2V6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">Smart Insights</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Machine learning algoritmes identificeren complexe patronen en voorspellen toekomstige performance.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section id="how-it-works" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 fade-in-up">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                    Zo <span class="text-gradient">eenvoudig</span> werkt het
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Van data upload tot actionable insights in slechts drie stappen
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-12 items-center">
+                <div class="text-center scale-in">
+                    <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
+                        1
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">Upload CSV Data</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Exporteer je transactie data uit APM en upload het CSV-bestand naar ons platform.
+                    </p>
+                </div>
+                
+                <div class="text-center scale-in" style="animation-delay: 0.2s;">
+                    <div class="w-20 h-20 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
+                        2
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">AI Analyse</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Ons machine learning model analyseert je data en identificeert risico patronen.
+                    </p>
+                </div>
+                
+                <div class="text-center scale-in" style="animation-delay: 0.4s;">
+                    <div class="w-20 h-20 bg-gradient-to-r from-indigo-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
+                        3
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">Ontvang Rapport</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Krijg een gedetailleerd rapport met voorspellingen en aanbevelingen per e-mail.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="upload" class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12 fade-in-up">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                    Start je <span class="text-gradient">voorspelling</span>
+                </h2>
+                <p class="text-xl text-gray-600">
+                    Upload je APM data en ontdek wat de toekomst brengt
+                </p>
+            </div>
+            
+            <!-- Instructions Card -->
+            <div class="bg-gray-50 rounded-3xl p-8 mb-8 card-hover">
+                <details class="group">
+                    <summary class="flex items-center justify-between cursor-pointer text-lg font-semibold text-gray-900 mb-4">
+                        <span class="flex items-center">
+                            <svg class="w-6 h-6 mr-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Handleiding: CSV-bestand maken
+                        </span>
+                        <svg class="w-5 h-5 text-gray-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    
+                    <div class="space-y-6 text-gray-600 mt-6">
+                        <p class="leading-relaxed">
+                            Voordat u een CSV-bestand kunt uploaden, moet u eerst de juiste gegevens exporteren uit APM. 
+                            Volg deze stappen voor het genereren van het benodigde CSV-bestand:
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0 mt-1">1</div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Log in op APM - P</h4>
+                                    <p>Open de APM Performance-omgeving en meld u aan met uw gebruikersgegevens.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4">
+                                <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0 mt-1">2</div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Navigeer naar User Reports</h4>
+                                    <p>Ga naar het menu "Applications" en selecteer "User Reports".</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4">
+                                <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0 mt-1">3</div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Zoek het rapport "Machine Learning POC"</h4>
+                                    <p>Gebruik de zoekfunctie om te zoeken op naam: "Machine Learning POC"</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4">
+                                <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0 mt-1">4</div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Configureer en exporteer</h4>
+                                    <p>Open het rapport, pas de weergave-instellingen aan (Custom view, 2,5 uur tijdspanne, interval van 5 minuten), 
+                                    selecteer de kolommen "Transaction" en "Transaction Response Time (sec.)" en exporteer naar CSV-formaat.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+            
+            <!-- Upload Form -->
+            <form action="/predict" method="post" enctype="multipart/form-data" class="space-y-8">
+                <!-- Email Input -->
+                <div class="text-center fade-in-up">
+                    <label class="block text-lg font-semibold text-gray-900 mb-4">
+                        Ontvang de resultaten per e-mail
+                    </label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        class="w-full max-w-md mx-auto px-6 py-4 border border-gray-200 rounded-2xl text-center text-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
+                        placeholder="jouw.email@bedrijf.nl"                     >
+                </div>
+                
+                <!-- File Upload -->
+                <div class="upload-area">
+                    <label 
+                        for="file-upload" 
+                        class="group relative block w-full p-12 border-2 border-dashed border-gray-200 rounded-3xl text-center cursor-pointer transition-all duration-300 hover:border-blue-400 hover:bg-blue-50"
+                        id="drop-zone"
+                    >
+                        <div class="space-y-4">
+                            <div class="flex justify-center">
+                                <svg class="w-16 h-16 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-semibold text-gray-900 mb-2">Upload je CSV bestand</h3>
+                                <p class="text-gray-600">Sleep je bestand hierheen of klik om te selecteren</p>
+                                <p class="text-sm text-gray-400 mt-2">Ondersteunde formaten: CSV (max 10MB)</p>
+                            </div>
+                        </div>
+                        <input id="file-upload" type="file" name="file" class="sr-only" accept=".csv" required>
+                    </label>
+                    
+                    <div id="file-info" class="hidden mt-6 p-6 bg-green-50 border border-green-200 rounded-2xl">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <p class="font-semibold text-gray-900" id="file-name"></p>
+                                    <p class="text-sm text-gray-600" id="file-size"></p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="removeFile()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button 
+                        type="submit" 
+                        id="submit-btn"
+                        class="btn-primary text-white px-12 py-4 rounded-2xl text-lg font-semibold shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none transition-all"
+                    >
+                        <span class="flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            <span>Genereer Voorspelling</span>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <span class="text-xl font-semibold">Predictive Monitoring Tool</span>
+            </div>
+            <p class="text-gray-400">© 2025 - Gemaakt door Allard Veldman</p>
+        </div>
+    </footer>
+
     <script>
-        document.getElementById('file-upload').addEventListener('change', function() {
-            const fileName = this.files[0] ? this.files[0].name : '';
-            document.getElementById('file-name').textContent = fileName;
-            document.getElementById('predict-btn').disabled = !fileName;
+        // Smooth scrolling
+        function scrollToUpload() {
+            document.getElementById('upload').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animation elements
+        document.querySelectorAll('.fade-in-up, .scale-in').forEach(el => {
+            observer.observe(el);
         });
 
-        // Enable drag and drop
-        const dropZone = document.querySelector('.custom-file-upload');
-        
-        ['dragover', 'dragenter'].forEach(eventName => {
-            dropZone.addEventListener(eventName, e => {
-                e.preventDefault();
-                dropZone.classList.add('bg-light');
-            });
+        // File upload functionality
+        const fileUpload = document.getElementById('file-upload');
+        const dropZone = document.getElementById('drop-zone');
+        const fileInfo = document.getElementById('file-info');
+        const fileName = document.getElementById('file-name');
+        const fileSize = document.getElementById('file-size');
+        const submitBtn = document.getElementById('submit-btn');
+
+        // File change handler
+        fileUpload.addEventListener('change', handleFileSelect);
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                displayFileInfo(file);
+                submitBtn.disabled = false;
+            }
+        }
+
+        function displayFileInfo(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.remove('hidden');
+            dropZone.classList.add('hidden');
+        }
+
+        function removeFile() {
+            fileUpload.value = '';
+            fileInfo.classList.add('hidden');
+            dropZone.classList.remove('hidden');
+            submitBtn.disabled = true;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
         });
-        
-        ['dragleave', 'dragend'].forEach(eventName => {
-            dropZone.addEventListener(eventName, e => {
-                dropZone.classList.remove('bg-light');
-            });
-        });
-        
-        dropZone.addEventListener('drop', e => {
+
+        function preventDefaults(e) {
             e.preventDefault();
-            dropZone.classList.remove('bg-light');
-            
-            const fileInput = document.getElementById('file-upload');
-            fileInput.files = e.dataTransfer.files;
-            
-            const event = new Event('change');
-            fileInput.dispatchEvent(event);
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
         });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('drag-active');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('drag-active');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                fileUpload.files = files;
+                handleFileSelect({ target: { files: files } });
+            }
+        }
+
+        // Parallax effect for floating elements
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.parallax');
+            
+            parallaxElements.forEach(element => {
+                const speed = element.dataset.speed || 0.5;
+                const yPos = -(scrolled * speed);
+                element.style.transform = `translate3d(0, ${yPos}px, 0)`;
+            });
+        });
+
+        // Add scroll-triggered animations
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(255, 255, 255, 0.95)';
+                nav.style.boxShadow = '0 1px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                nav.style.background = 'rgba(255, 255, 255, 0.25)';
+                nav.style.boxShadow = 'none';
+            }
+        });
+
+        // Form submission with loading state
+        document.querySelector('form').addEventListener('submit', (e) => {
+            const submitButton = document.getElementById('submit-btn');
+            const originalText = submitButton.innerHTML;
+            
+            submitButton.innerHTML = `
+                <span class="flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Bezig met analyseren...</span>
+                </span>
+            `;
+            submitButton.disabled = true;
+            
+            // Reset after 2 seconds (for demo purposes)
+            setTimeout(() => {
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+            }, 2000);
+        });
+
+        // Add typing effect to hero title
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Initialize typing effect after page load
+        window.addEventListener('load', () => {
+            const heroTitle = document.querySelector('.hero-title');
+            const originalText = heroTitle.textContent;
+            setTimeout(() => {
+                typeWriter(heroTitle, originalText, 50);
+            }, 500);
+        });
+
+        // Add smooth hover effects to cards
+        document.querySelectorAll('.card-hover').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Add ripple effect to buttons
+        document.querySelectorAll('.btn-primary').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add CSS for ripple effect
+        const style = document.createElement('style');
+        style.textContent = `
+            .btn-primary {
+                position: relative;
+                overflow: hidden;
+            }
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(0);
+                animation: ripple-animation 0.6s ease-out;
+                pointer-events: none;
+            }
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
     </script>
 </body>
 </html>
